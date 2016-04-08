@@ -27,12 +27,10 @@ exports.findByCit = function(req, res) {
      it is implemented to return an array so that we have compatibility
       with other finders method
      */
-		console.log(req.query.cit);
     A1
         .findByCit(req.query.cit)
 				.then(
             function(a1s) {
-								console.log('resolving promise: ' + a1s);
                 return sendJsonResponse(res, 200, a1s);
             }
         );

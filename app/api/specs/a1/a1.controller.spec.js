@@ -4,29 +4,39 @@
 
 var assert = require('assert');
 var sinon = require('sinon');
-
+require('sinon-as-promised');
+require('sinon-mongoose');
 
 describe('A1ModelController', function() {
 	var A1Controller = require('../../src/a1/a1.controller.js');
 	var A1Model = require('../../src/a1/a1.model.js');
-	var A1Mock = sinon.mock(A1Model);
 	
 	it('#controller.findByCit', function(done) {
-		
-		var req = { query: {cit: '1'}};
-		var res = {};
+	
 
-		A1Mock
+    var statusCallback = function(data) {
+			console.log(data);
+		};
+
+    var jsonCallback = function(data) {
+			console.log(data);
+			done();		
+		};
+
+	
+		var req = { query: {cit: '1'}};
+		var res = { 
+			status: statusCallback,
+			json: jsonCallback
+		};
+
+		sinon
+			.mock(A1Model)
 			.expects('findByCit')
 			.withArgs('1')
-			.returns('500');
-
+			.resolves('success');
+	
 		A1Controller.findByCit(req, res);
-
-		assert.equals(res, 400);
-		
-		A1Mock.verify();
-		done();
 	});
 });
 }());

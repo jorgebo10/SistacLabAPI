@@ -13,6 +13,7 @@ describe('A1ModelController', function() {
 	
 	it('#controller.findByCit', function(done) {
 	
+		var mock = sinon.mock(A1Model);
 
     var statusCallback = function(data) {
 			console.log(data);
@@ -20,6 +21,7 @@ describe('A1ModelController', function() {
 
     var jsonCallback = function(data) {
 			console.log(data);
+			mock.restore();
 			done();		
 		};
 
@@ -30,8 +32,7 @@ describe('A1ModelController', function() {
 			json: jsonCallback
 		};
 
-		sinon
-			.mock(A1Model)
+		mock
 			.expects('findByCit')
 			.withArgs('1')
 			.resolves('success');

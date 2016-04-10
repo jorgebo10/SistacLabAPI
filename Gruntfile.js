@@ -28,21 +28,21 @@ module.exports = function(grunt) {
 			files: ['Gruntfile.js', 'app/**/*.js', 'config/**/*.js']
 		},
 
-		mochaTest: {
-				test: {
-					options: {
-						reporter: 'spec',
-						captureFile: 'results.txt',
-						quiet: false,
-						clearRequireCache: false
-					},
-				src: ['app/api/specs/a1/**/*.js']
+		mocha_istanbul: {
+			coverage: {
+				src: 'app/api/specs',
+				options: {
+					coverageFolder: 'coverage',
+					reporter: 'spec',
+					coverate: true,
+					mask: '**/*.spec.js'
+				}
 			}
 		},
-	
+
 		watch: {
 			files: ['<%= jshint.files %>'],
-			tasks: ['jshint', 'mochaTest', 'uglify']
+			tasks: ['jshint', 'mocha_istanbul:coverage', 'uglify']
 		},
 
 		nodemon: {
@@ -51,10 +51,10 @@ module.exports = function(grunt) {
 			}
 		},
 
-	concurrent: {
-		tasks: ['nodemon','watch'],
-		options: {
-			logConcurrentOutput: true
+		concurrent: {
+			tasks: ['nodemon','watch'],
+			options: {
+				logConcurrentOutput: true
 		}
 	}
 });
@@ -66,6 +66,8 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-mocha-test');
+    grunt.loadNpmTasks('grunt-mocha-istanbul');
 	
-	grunt.registerTask('default', ['jshint', 'mochaTest', 'concat', 'uglify', 'concurrent']);
+	grunt.registerTask('default', ['jshint', 'mocha_istanbul:coverage', 'concat', 'uglify', 'concurrent']);
+	grunt.registerTask('test', ['mocha_istanbul:coverage']);
 };

@@ -29,9 +29,14 @@ exports.findByCit = function(req, res) {
      */
     A1
         .findByCit(req.query.cit)
-				.then(
+		.then(
             function(a1s) {
                 return sendJsonResponse(res, 200, a1s);
+            }
+        )
+        .catch(
+            function(err) {
+                return sendJsonResponse(res, 400, err);
             }
         );
 };

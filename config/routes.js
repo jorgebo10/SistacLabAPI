@@ -12,9 +12,9 @@ app.get('/', function(req, res) {
 //  app.use('/api/contratos', require('../api/src/contrato'));
 //  app.use('/api/usuariosempresas', require('../api/src/usuarioempresa'));
 //  app.use('/api/empresas', require('../api/src/empresa'));
-  app.use('/api/fotos', require('../app/api/src/foto'));
+//  app.use('/api/fotos', require('../app/api/src/foto'));
 //  app.use('/api/informes', require('../api/src/informe'));
-//  app.use('/api/a1s', require('../api/src/a1'));
+  app.use('/api/a1s', require('../app/api/src/a1'));
 //  app.use('/api/users', require('./api/src/user'));
 };
 }());

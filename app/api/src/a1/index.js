@@ -3,13 +3,13 @@
 
 var express = require('express');
 var controller = require('./a1.controller');
-var auth = require('../../auth/auth.service');
+var _ = require('underscore');
 
 var router = express.Router();
 
 router.get('/', function(req, res, next) {
-	console.log(req);
-	if (req.query.cit) {
+
+	if (!_.isEmpty(req.query)) {
 		controller.findByCit(req, res);
 	} else {
 		controller.findAll(req, res);

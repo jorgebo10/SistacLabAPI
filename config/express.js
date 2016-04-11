@@ -3,7 +3,6 @@
 'use strict';
 
 var logger = require('../app/utils/logger.js');
-var express = require('express');
 var morgan = require('morgan');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
@@ -12,6 +11,17 @@ var config = require('./environment');
 var passport = require('passport');
 
 module.exports = function(app) {
+	app.use("/api/", function(req, res, next) {
+		var contentType = req.headers['content-type'];
+
+		if ((req.method === 'POST' || req.method === 'PUT') && !contentType && contentType.indexOf('application/json') !== 0)   {
+	return res.send(406);
+		} else if (req.method === 'GET' && req.get('accepts') !== 'application/json') {
+	return res.send(406);
+} else {
+			next();
+   }
+	});
   app.use(bodyParser.json({limit: '5mb'}));
   app.use(bodyParser.urlencoded({extended: false, limit: '5mb'}));
   app.use(methodOverride());

@@ -10,14 +10,14 @@ var _ = require('underscore');
 
 var sendJsonResponse = function(res, status, content) {
     res.status(status);
-    res.json(content);
+		res.json(content);
     if (400 === status || 404 === status) {
         sistacLoggerError.error(content);
     }
 };
 
 exports.findByCit = function(req, res) {
-    if (_.isUndefined(req.query) || _.isUndefined(req.query.cit)) {
+    if (_.isEmpty(req.query) || !req.query.cit) {
         return sendJsonResponse(res, 404, {
             'message': 'cit not found in request params'
         });

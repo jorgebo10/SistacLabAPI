@@ -7,6 +7,7 @@ var express = require('express');
 var config = require('./config/environment');
 var mongoose = require('mongoose');
 var autoIncrement = require('mongoose-auto-increment');
+require('express-safe-json')(express);
 
 var connection = mongoose.connect(config.mongo.uri, config.mongo.options);
 autoIncrement.initialize(connection);

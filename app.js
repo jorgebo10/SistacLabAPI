@@ -18,6 +18,7 @@ if (config.seedDB) {
 logger.debug('esto es debug');
 var app = express();
 
+require('express-safe-json')(app);
 require('./config/express')(app);
 require('./config/routes')(app);
 

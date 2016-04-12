@@ -10,7 +10,7 @@ var _ = require('underscore');
 
 var sendJsonResponse = function(res, status, content) {
     res.status(status);
-		res.json(content);
+	res.json(content);
     if (400 === status || 404 === status) {
         sistacLoggerError.error(content);
     }

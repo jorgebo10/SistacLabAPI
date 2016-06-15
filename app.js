@@ -6,6 +6,7 @@ var logger = require('./app/utils/logger');
 var express = require('express');
 var config = require('./config/environment');
 var mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
 var autoIncrement = require('mongoose-auto-increment');
 require('express-safe-json')(express);
 

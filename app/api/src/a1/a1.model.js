@@ -83,11 +83,19 @@ var A1Schema = new Schema({
     }
 });
 
-A1Schema.static('findByCit', function(cit) {
+A1Schema.static('getByCit', function(cit) {
 	return this
-		.find({ cit: cit })
+        .findOne({cit: cit})
 		.select('-sequence -__v')
 		.exec();
+});
+
+
+A1Schema.static('getByNumeroTramite', function(numeroTramite) {
+    return this
+        .findOne({ numeroTramite: numeroTramite })
+        .select('-sequence -__v')
+        .exec();
 });
 
 /*A1Schema.plugin(autoIncrement.plugin, {

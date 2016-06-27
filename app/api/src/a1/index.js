@@ -10,7 +10,7 @@ var router = express.Router();
 router.get('/', function(req, res, next) {
 
 	if (!_.isEmpty(req.query)) {
-		controller.findByCit(req, res);
+		controller.getByCit(req, res);
 	} else {
 		controller.findAll(req, res);
 	}

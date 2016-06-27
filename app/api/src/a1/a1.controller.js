@@ -16,7 +16,7 @@ var sendJsonResponse = function(res, status, content) {
     }
 };
 
-exports.findByCit = function(req, res) {
+exports.getByCit = function(req, res) {
     if (_.isEmpty(req.query) || !req.query.cit) {
         return sendJsonResponse(res, 404, {
             'message': 'cit not found in request params'
@@ -28,10 +28,10 @@ exports.findByCit = function(req, res) {
       with other finders method
      */
     A1
-        .findByCit(req.query.cit)
+        .getByCit(req.query.cit)
 		.then(
-            function(a1s) {
-                return sendJsonResponse(res, 200, a1s);
+            function(a1) {
+                    return sendJsonResponse(res, 200, a1);
             }
         )
         .catch(
@@ -45,38 +45,37 @@ exports.findAll = function(req, res) {
     A1
         .find()
         .select('-sequence -__v')
-        .exec(
-            function(err, a1s) {
-                if (err) {
-                    return sendJsonResponse(res, 400, err);
-                }
+        .exec()
+        .then(
+            function(a1s) {
                 return sendJsonResponse(res, 200, a1s);
+            }
+        )
+        .catch(
+            function(err) {
+                return sendJsonResponse(res, 400, err);
             }
         );
 };
 
 exports.getByNumeroTramite = function(req, res) {
-    if (!req.params || !req.params.id) {
+    if (!req.params || !req.params.numeroTramite) {
         return sendJsonResponse(res, 404, {
-            'message': 'id not found in request params'
+            'message': 'numeroTramite not found in request params'
         });
     }
     A1
-        .findOne({
-            numeroTramite: req.params.id
-        })
-        .select('-sequence -__v')
-        .exec(function(err, a1) {
-            if (err) {
-                return sendJsonResponse(res, 400, err);
-            } else if (!a1) {
-                return sendJsonResponse(res, 404, {
-                    'message': 'A1 not found by numeroTramite: ' + req.params.id
-                });
-            } else {
+        .getByNumeroTramite(req.query.numeroTramite)
+        .then(
+            function(a1) {
                 return sendJsonResponse(res, 200, a1);
             }
-        });
+        )
+        .catch(
+            function(err) {
+                return sendJsonResponse(res, 400, err);
+            }
+        );
 };
 
 exports.create = function(req, res) {

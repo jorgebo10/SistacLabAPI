@@ -587,12 +587,10 @@ describe('A1ModelController', function() {
 		var a1 = {numeroTramite: '1'};
 
 		var statusCallback = function(status) {
-			console.log(status);
 			status.should.equal(404);
 		};
 
 		var jsonCallback = function(json) {
-			console.log(json);
 			json.message.should.equal('numeroTramite not found in request params');
 			mock.restore();
 			done();		
@@ -639,6 +637,43 @@ describe('A1ModelController', function() {
 			status: statusCallback,
 			json: jsonCallback
 		};
+
+		A1Controller.update(req, res);
+	});
+
+	it('should return 404 while updating and a1Doc not found by numeroTramite', function(done) {
+		var mock = sinon.mock(A1Model);
+		var a1 = {numeroTramite: '1'};
+
+		var statusCallback = function(status) {
+			status.should.equal(404);
+		};
+
+		var jsonCallback = function(json) {
+			console.log(json.message);
+			json.message.should.equal('a1Doc not found');
+			mock.restore();
+			done();		
+		};
+		
+		var req = {
+			params: {
+				numeroTramite: '1'
+			}, 
+			body: { 
+				numeroTramite: '1'
+			}
+		};
+
+		var res = { 
+			status: statusCallback,
+			json: jsonCallback
+		};
+
+		mock
+			.expects('getByNumeroTramite')
+			.withArgs('1')
+			.resolves(null);
 
 		A1Controller.update(req, res);
 	});

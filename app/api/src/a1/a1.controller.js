@@ -131,21 +131,15 @@ exports.update = function(req, res) {
             'message': 'numeroTramite not found in request params'
         });
     }
-    console.log('pp');
     A1
-        .findOne({
-            numeroTramite: req.params.numeroTramite
-        })
-        .exec()
+        .getByNumeroTramite(req.params.numeroTramite)
         .then(
             function(a1) {
-                console.log('aaooo');
-                if (a1) {
+                if (null === a1) {
                     return sendJsonResponse(res, 404, {
-                        'message': 'a1Doc not found by numeroTramite'
+                        'message': 'a1Doc not found'
                     });
                 }
-                a1.numeroTramite = req.body.numeroTramite;
                 a1.cit = req.body.cit;
                 a1.normaFabricacion = req.body.normaFabricacion;
                 a1.fabricante = req.body.fabricante;
@@ -167,7 +161,6 @@ exports.update = function(req, res) {
         )
         .then(
             function(a1) {
-                console.log('ooo');
                 return sendJsonResponse(res, 200, a1);
             }
         )

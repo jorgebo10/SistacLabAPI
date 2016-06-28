@@ -31,7 +31,36 @@ exports.getByCit = function(req, res) {
         .getByCit(req.query.cit)
 		.then(
             function(a1) {
+                if (null === a1) {
+                    return sendJsonResponse(res, 404, {'message': 'a1Doc not found'});
+                } else {
                     return sendJsonResponse(res, 200, a1);
+                }
+            }
+        )
+        .catch(
+            function(err) {
+                return sendJsonResponse(res, 400, err);
+            }
+        );
+};
+
+
+exports.getByNumeroTramite = function(req, res) {
+    if (!req.query || !req.query.numeroTramite) {
+        return sendJsonResponse(res, 404, {
+            'message': 'numeroTramite not found in request params'
+        });
+    }
+    A1
+        .getByNumeroTramite(req.query.numeroTramite)
+        .then(
+            function(a1) {
+                if (null === a1) {
+                    return sendJsonResponse(res, 404, {'message': 'a1Doc not found'});
+                } else {
+                    return sendJsonResponse(res, 200, a1);
+                }
             }
         )
         .catch(
@@ -49,26 +78,6 @@ exports.findAll = function(req, res) {
         .then(
             function(a1s) {
                 return sendJsonResponse(res, 200, a1s);
-            }
-        )
-        .catch(
-            function(err) {
-                return sendJsonResponse(res, 400, err);
-            }
-        );
-};
-
-exports.getByNumeroTramite = function(req, res) {
-    if (!req.params || !req.params.numeroTramite) {
-        return sendJsonResponse(res, 404, {
-            'message': 'numeroTramite not found in request params'
-        });
-    }
-    A1
-        .getByNumeroTramite(req.query.numeroTramite)
-        .then(
-            function(a1) {
-                return sendJsonResponse(res, 200, a1);
             }
         )
         .catch(
@@ -145,21 +154,27 @@ exports.update = function(req, res) {
         );
 };
 
-exports.delete = function(req, res) {
-    var id = req.params.id;
-    if (!id) {
+exports.deleteByNumeroTramite = function(req, res) {
+    var numeroTramite = req.params.numeroTramite;
+    if (!numeroTramite) {
         return sendJsonResponse(res, 404, {
-            'message': 'A1 not found by numeroTramite: ' + id
+            'message': 'a1Doc not found'
         });
     }
 
     A1
         .findOneAndRemove({
-            numeroTramite: id
+            numeroTramite: numeroTramite
         })
-        .exec(
+        .exec()
+        .then(
+            function(a1) {
+                return sendJsonResponse(res, 204, a1);
+            }
+        )
+        .catch(
             function(err) {
-                return err ? sendJsonResponse(res, 404, err) : sendJsonResponse(res, 204, null);
+                return sendJsonResponse(res, 400, err);
             }
         );
 };

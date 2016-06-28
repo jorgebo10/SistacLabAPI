@@ -76,7 +76,7 @@ describe('A1ModelController', function() {
 		A1Controller.getByCit(req, res);
 	});
 
-	it('should return 400 if promise is rejected', function(done) {
+	it('should return 400 if promise is rejected while looking by numeroTramite', function(done) {
 		var mock = sinon.mock(A1Model);
 
 		var statusCallback = function(status) {
@@ -101,6 +101,33 @@ describe('A1ModelController', function() {
 			.rejects('error');
 	
 		A1Controller.getByCit(req, res);
+	});
+
+	it('should return 400 if promise is rejected while looking by numeroTramite', function(done) {
+		var mock = sinon.mock(A1Model);
+
+		var statusCallback = function(status) {
+			status.should.equal(400);
+		};
+
+		var jsonCallback = function(json) {
+			json.message.should.equal('error');
+			mock.restore();
+			done();		
+		};
+		
+		var req = { query: {numeroTramite: '1'}};
+		var res = { 
+			status: statusCallback,
+			json: jsonCallback
+		};
+
+		mock
+			.expects('getByNumeroTramite')
+			.withArgs('1')
+			.rejects('error');
+	
+		A1Controller.getByNumeroTramite(req, res);
 	});
 
 	it('should return all A1 docs', function(done) {
@@ -195,6 +222,216 @@ describe('A1ModelController', function() {
 		};
 
 		A1Controller.getByNumeroTramite(req, res);
+	});
+
+	it('should return 404 if a1Doc not found by cit', function(done) {
+		var mock = sinon.mock(A1Model);
+
+		var statusCallback = function(status) {
+			status.should.equal(404);
+		};
+
+		var jsonCallback = function(json) {
+			json.message.should.equal('a1Doc not found');
+			mock.restore();
+			done();		
+		};
+		
+		var req = { query: {cit: '1'}};
+		var res = { 
+			status: statusCallback,
+			json: jsonCallback
+		};
+
+		mock
+			.expects('getByCit')
+			.withArgs('1')
+			.resolves(null);
+	
+		A1Controller.getByCit(req, res);
+	});
+
+	it('should return 404 if a1Doc not found by numeroTramite', function(done) {
+		var mock = sinon.mock(A1Model);
+
+		var statusCallback = function(status) {
+			status.should.equal(404);
+		};
+
+		var jsonCallback = function(json) {
+			json.message.should.equal('a1Doc not found');
+			mock.restore();
+			done();		
+		};
+		
+		var req = { query: {numeroTramite: '1'}};
+		var res = { 
+			status: statusCallback,
+			json: jsonCallback
+		};
+
+		mock
+			.expects('getByNumeroTramite')
+			.withArgs('1')
+			.resolves(null);
+	
+		A1Controller.getByNumeroTramite(req, res);
+	});
+
+	it('should return 200 if a1Doc is found by numeroTramite', function(done) {
+		var mock = sinon.mock(A1Model);
+		var a1 = {numeroTramite: '1'};
+
+		var statusCallback = function(status) {
+			status.should.equal(200);
+		};
+
+		var jsonCallback = function(json) {
+			json.should.equal(a1);
+			mock.restore();
+			done();		
+		};
+		
+		var req = { query: {numeroTramite: '1'}};
+		var res = { 
+			status: statusCallback,
+			json: jsonCallback
+		};
+
+		mock
+			.expects('getByNumeroTramite')
+			.withArgs('1')
+			.resolves(a1);
+	
+		A1Controller.getByNumeroTramite(req, res);
+	});
+
+	it('should return 200 if a1Doc is found by cit', function(done) {
+		var mock = sinon.mock(A1Model);
+		var a1 = {cit: '1'};
+
+		var statusCallback = function(status) {
+			status.should.equal(200);
+		};
+
+		var jsonCallback = function(json) {
+			json.should.equal(a1);
+			mock.restore();
+			done();		
+		};
+		
+		var req = { query: {cit: '1'}};
+		var res = { 
+			status: statusCallback,
+			json: jsonCallback
+		};
+
+		mock
+			.expects('getByCit')
+			.withArgs('1')
+			.resolves(a1);
+	
+		A1Controller.getByCit(req, res);
+	});
+
+	it('should return 204 if a1 was removed ok', function(done) {
+		var mock = sinon.mock(A1Model);
+		var a1 = {numeroTramite: '1'};
+
+		var statusCallback = function(status) {
+			status.should.equal(204);
+		};
+
+		var jsonCallback = function(json) {
+			json.should.equal(a1);
+			mock.restore();
+			done();		
+		};
+		
+		var req = { params: {numeroTramite: '1'} };
+		var res = { 
+			status: statusCallback,
+			json: jsonCallback
+		};
+
+		mock
+			.expects('findOneAndRemove')
+			.chain('exec')
+			.resolves(a1);
+		
+		A1Controller.deleteByNumeroTramite(req, res);
+	});
+
+	it('should return 400 if there was an error while removing a1Doc', function(done) {
+		var mock = sinon.mock(A1Model);
+		var a1 = {numeroTramite: '1'};
+
+		var statusCallback = function(status) {
+			status.should.equal(400);
+		};
+
+		var jsonCallback = function(json) {
+			json.message.should.equal('error');
+			mock.restore();
+			done();		
+		};
+		
+		var req = { params: {numeroTramite: '1'} };
+		var res = { 
+			status: statusCallback,
+			json: jsonCallback
+		};
+
+		mock
+			.expects('findOneAndRemove')
+			.chain('exec')
+			.rejects('error');
+		
+		A1Controller.deleteByNumeroTramite(req, res);
+	});
+
+	it('should return 404 if a1Doc not found by numeroTramite while deleting', function(done) {
+		var mock = sinon.mock(A1Model);
+
+		var statusCallback = function(status) {
+			status.should.equal(404);
+		};
+
+		var jsonCallback = function(json) {
+			json.message.should.equal('a1Doc not found');
+			mock.restore();
+			done();		
+		};
+		
+		var req = { params: {numeroTramite: ''}};
+		var res = { 
+			status: statusCallback,
+			json: jsonCallback
+		};
+
+		A1Controller.deleteByNumeroTramite(req, res);
+	});
+
+	it('should return 404 if a1Doc not sent by numeroTramite while deleting', function(done) {
+		var mock = sinon.mock(A1Model);
+
+		var statusCallback = function(status) {
+			status.should.equal(404);
+		};
+
+		var jsonCallback = function(json) {
+			json.message.should.equal('a1Doc not found');
+			mock.restore();
+			done();		
+		};
+		
+		var req = { params: {}};
+		var res = { 
+			status: statusCallback,
+			json: jsonCallback
+		};
+
+		A1Controller.deleteByNumeroTramite(req, res);
 	});
 });
 }());

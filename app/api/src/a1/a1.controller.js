@@ -132,36 +132,28 @@ exports.update = function(req, res) {
         });
     }
     A1
-        .getByNumeroTramite(req.params.numeroTramite)
+        .update({numeroTramite: req.params.numeroTramite}, { 
+            cit: req.body.cit,
+            normaFabricacion : req.body.normaFabricacion,
+            fabricante : req.body.fabricante,
+            nombreInstalacion : req.body.nombreInstalacion,
+            matricula : req.body.matricula,
+            estado : req.body.estado,
+            anioFabricacion : req.body.anioFabricacion,
+            anioInstalacion : req.body.anioInstalacion,
+            placaIdentificacion : req.body.placaIdentificacion,
+            temperaturaOperacion : req.body.temperaturaOperacion,
+            especificacionChapas : req.body.especificacionChapas,
+            numeroInterno : req.body.numeroInterno,
+            observaciones : req.body.observaciones,
+            laminasInspeccionadas : req.body.laminasInspeccionadas,
+            elevado : req.body.elevado,
+            tieneInspeccionesAnteriores: req.body.tieneInspeccionesAnteriores
+        })
+        .exec()
         .then(
-            function(a1) {
-                if (null === a1) {
-                    return sendJsonResponse(res, 404, {
-                        'message': 'a1Doc not found'
-                    });
-                }
-                a1.cit = req.body.cit;
-                a1.normaFabricacion = req.body.normaFabricacion;
-                a1.fabricante = req.body.fabricante;
-                a1.nombreInstalacion = req.body.nombreInstalacion;
-                a1.matricula = req.body.matricula;
-                a1.estado = req.body.estado;
-                a1.anioFabricacion = req.body.anioFabricacion;
-                a1.anioInstalacion = req.body.anioInstalacion;
-                a1.placaIdentificacion = req.body.placaIdentificacion;
-                a1.temperaturaOperacion = req.body.temperaturaOperacion;
-                a1.especificacionChapas = req.body.especificacionChapas;
-                a1.numeroInterno = req.body.numeroInterno;
-                a1.observaciones = req.body.observaciones;
-                a1.laminasInspeccionadas = req.body.laminasInspeccionadas;
-                a1.elevado = req.body.elevado;
-                a1.tieneInspeccionesAnteriores = req.body.tieneInspeccionesAnteriores;
-                return a1.save();
-            }
-        )
-        .then(
-            function(a1) {
-                return sendJsonResponse(res, 200, a1);
+            function() {
+                return sendJsonResponse(res, 200, null);
             }
         )
         .catch(

@@ -641,18 +641,17 @@ describe('A1ModelController', function() {
 		A1Controller.update(req, res);
 	});
 
-	it('should return 404 while updating and a1Doc not found by numeroTramite', function(done) {
+	it('should return 200 while updating', function(done) {
 		var mock = sinon.mock(A1Model);
 		var a1 = {numeroTramite: '1'};
 
 		var statusCallback = function(status) {
-			status.should.equal(404);
+			status.should.equal(200);
+			mock.restore();
+			done();		
 		};
 
 		var jsonCallback = function(json) {
-			json.message.should.equal('a1Doc not found');
-			mock.restore();
-			done();		
 		};
 		
 		var req = {
@@ -670,9 +669,48 @@ describe('A1ModelController', function() {
 		};
 
 		mock
-			.expects('getByNumeroTramite')
+			.expects('update')
 			.withArgs('1')
+			.withArgs({numeroTramite: '1'})
+			.chain('exec')
 			.resolves(null);
+
+		A1Controller.update(req, res);
+	});
+
+	it('should return 400 while updating', function(done) {
+		var mock = sinon.mock(A1Model);
+		var a1 = {numeroTramite: '1'};
+
+		var statusCallback = function(status) {
+			status.should.equal(400);
+			mock.restore();
+			done();		
+		};
+
+		var jsonCallback = function(json) {
+		};
+		
+		var req = {
+			params: {
+				numeroTramite: '1'
+			}, 
+			body: { 
+				numeroTramite: '1'
+			}
+		};
+
+		var res = { 
+			status: statusCallback,
+			json: jsonCallback
+		};
+
+		mock
+			.expects('update')
+			.withArgs('1')
+			.withArgs({numeroTramite: '1'})
+			.chain('exec')
+			.rejects('error');
 
 		A1Controller.update(req, res);
 	});

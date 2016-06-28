@@ -132,7 +132,7 @@ exports.update = function(req, res) {
         });
     }
     A1
-        .update({numeroTramite: req.params.numeroTramite}, { 
+        .findOneAndUpdate({numeroTramite: req.params.numeroTramite}, { 
             cit: req.body.cit,
             normaFabricacion : req.body.normaFabricacion,
             fabricante : req.body.fabricante,
@@ -149,11 +149,11 @@ exports.update = function(req, res) {
             laminasInspeccionadas : req.body.laminasInspeccionadas,
             elevado : req.body.elevado,
             tieneInspeccionesAnteriores: req.body.tieneInspeccionesAnteriores
-        })
+        }, {runValidators: true})
         .exec()
         .then(
-            function() {
-                return sendJsonResponse(res, 200, null);
+            function(a1) {
+                return sendJsonResponse(res, 200, a1);
             }
         )
         .catch(

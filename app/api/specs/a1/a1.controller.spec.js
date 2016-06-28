@@ -669,8 +669,7 @@ describe('A1ModelController', function() {
 		};
 
 		mock
-			.expects('update')
-			.withArgs('1')
+			.expects('findOneAndUpdate')
 			.withArgs({numeroTramite: '1'})
 			.chain('exec')
 			.resolves(null);
@@ -706,8 +705,7 @@ describe('A1ModelController', function() {
 		};
 
 		mock
-			.expects('update')
-			.withArgs('1')
+			.expects('findOneAndUpdate')
 			.withArgs({numeroTramite: '1'})
 			.chain('exec')
 			.rejects('error');

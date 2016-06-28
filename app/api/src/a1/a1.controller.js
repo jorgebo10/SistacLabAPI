@@ -88,6 +88,11 @@ exports.findAll = function(req, res) {
 };
 
 exports.create = function(req, res) {
+    if (!req.body.numeroTramite) {
+        return sendJsonResponse(res, 404, {
+            'message': 'numeroTramite not found'
+        });
+    }
     A1.create({
         numeroTramite: req.body.numeroTramite,
         cit: req.body.cit,
@@ -106,9 +111,18 @@ exports.create = function(req, res) {
         elevado: req.body.elevado,
         tieneInspeccionesAnteriores: req.body.tieneInspeccionesAnteriores,
         laminasInspeccionadas: req.body.laminasInspeccionadas
-    }, function(err, a1) {
-        return err ? sendJsonResponse(res, 400, err) : sendJsonResponse(res, 201, a1);
-    });
+    })
+    .exec()
+    .then(
+        function(a1) {
+            return sendJsonResponse(res, 201, a1);
+        }
+    )
+    .catch(
+        function(err) {
+            return sendJsonResponse(res, 400, err);
+        }
+    );
 };
 
 exports.update = function(req, res) {

@@ -126,22 +126,23 @@ exports.create = function(req, res) {
 };
 
 exports.update = function(req, res) {
-    if (!req.params || !req.params.id) {
+    if (!req.params || !req.params.numeroTramite) {
         return sendJsonResponse(res, 404, {
-            'message': 'id not found in request params'
+            'message': 'numeroTramite not found in request params'
         });
     }
+    console.log('pp');
     A1
         .findOne({
-            numeroTramite: req.params.id
+            numeroTramite: req.params.numeroTramite
         })
-        .exec(
-            function(err, a1) {
-                if (err) {
-                    return sendJsonResponse(res, 400, err);
-                } else if (!a1) {
+        .exec()
+        .then(
+            function(a1) {
+                console.log('aaooo');
+                if (a1) {
                     return sendJsonResponse(res, 404, {
-                        'message': 'A1 not found by numeroTramite:' + req.params.id
+                        'message': 'a1Doc not found by numeroTramite'
                     });
                 }
                 a1.numeroTramite = req.body.numeroTramite;
@@ -161,9 +162,18 @@ exports.update = function(req, res) {
                 a1.laminasInspeccionadas = req.body.laminasInspeccionadas;
                 a1.elevado = req.body.elevado;
                 a1.tieneInspeccionesAnteriores = req.body.tieneInspeccionesAnteriores;
-                a1.save(function(err, a1) {
-                    return err ? sendJsonResponse(res, 400, err) : sendJsonResponse(res, 200, a1);
-                });
+                return a1.save();
+            }
+        )
+        .then(
+            function(a1) {
+                console.log('ooo');
+                return sendJsonResponse(res, 200, a1);
+            }
+        )
+        .catch(
+            function(err) {
+                return sendJsonResponse(res, 400, err);
             }
         );
 };

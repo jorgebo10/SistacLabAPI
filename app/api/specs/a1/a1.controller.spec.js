@@ -582,5 +582,65 @@ describe('A1ModelController', function() {
 		A1Controller.create(req, res);
 	});
 
+	it('should return 404 while updating and numeroTramite not found', function(done) {
+		var mock = sinon.mock(A1Model);
+		var a1 = {numeroTramite: '1'};
+
+		var statusCallback = function(status) {
+			console.log(status);
+			status.should.equal(404);
+		};
+
+		var jsonCallback = function(json) {
+			console.log(json);
+			json.message.should.equal('numeroTramite not found in request params');
+			mock.restore();
+			done();		
+		};
+		
+		var req = { 
+			params: {
+				numeroTramite: ''
+			},
+			body: { 
+				numeroTramite: '1'
+			}
+		};
+
+		var res = { 
+			status: statusCallback,
+			json: jsonCallback
+		};
+
+		A1Controller.update(req, res);
+	});
+
+	it('should return 404 while updating and numeroTramite not sent', function(done) {
+		var mock = sinon.mock(A1Model);
+		var a1 = {numeroTramite: '1'};
+
+		var statusCallback = function(status) {
+			status.should.equal(404);
+		};
+
+		var jsonCallback = function(json) {
+			json.message.should.equal('numeroTramite not found in request params');
+			mock.restore();
+			done();		
+		};
+		
+		var req = { 
+			body: { 
+				numeroTramite: '1'
+			}
+		};
+
+		var res = { 
+			status: statusCallback,
+			json: jsonCallback
+		};
+
+		A1Controller.update(req, res);
+	});
 });
 }());

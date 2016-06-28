@@ -650,7 +650,6 @@ describe('A1ModelController', function() {
 		};
 
 		var jsonCallback = function(json) {
-			console.log(json.message);
 			json.message.should.equal('a1Doc not found');
 			mock.restore();
 			done();		

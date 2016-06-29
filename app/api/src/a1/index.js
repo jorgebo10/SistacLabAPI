@@ -19,7 +19,7 @@ router.get('/:id', controller.getByNumeroTramite);
 router.post('/', controller.create);
 router.put('/:id', controller.update);
 router.patch('/:id', controller.update);
-router.delete('/:id', controller.delete);
+router.delete('/:id', controller.deleteByNumeroTramite);
 
 module.exports = router;
 }());

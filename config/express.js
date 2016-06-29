@@ -15,9 +15,9 @@ module.exports = function(app) {
 	app.use("/api/", function(req, res, next) {
 		var contentType = req.headers['content-type'];
 		if ((req.method === 'POST' || req.method === 'PUT') && !contentType && contentType.indexOf('application/json') !== 0)   {
-	return res.send(406);
-		} else if (req.method === 'GET' && req.get('accepts') !== 'application/json') {
-	return res.send(406);
+	return res.status(406);
+		} else if (req.method === 'GET' && req.get('accept') !== 'application/json') {
+	return res.status(406);
 } else {
 			next();
    }

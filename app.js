@@ -16,7 +16,6 @@ autoIncrement.initialize(connection);
 if (config.seedDB) {
  require('./config/seed');
 }
-logger.debug('esto es debug');
 var app = express();
 
 require('express-safe-json')(app);

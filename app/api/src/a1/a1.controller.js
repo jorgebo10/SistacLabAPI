@@ -4,24 +4,24 @@
 /* jshint node: true */
 
 var A1 = require('./a1.model');
-var winston = require('winston');
-var sistacLoggerError = winston.loggers.get('sistac-error');
-var _ = require('underscore');
+var logger = require('../../../utils/logger');
 
 var sendJsonResponse = function(res, status, content) {
     res.status(status);
 	res.json(content);
     if (400 === status || 404 === status) {
-        sistacLoggerError.error(content);
+        logger.error(content);
     }
 };
 
 exports.getByCit = function(req, res) {
-    if (_.isEmpty(req.query) || !req.query.cit) {
+    if (!req.query || !req.query.cit) {
         return sendJsonResponse(res, 404, {
             'message': 'cit not found in request params'
         });
     }
+
+
     /*
      Although this method is expected to return one object,
      it is implemented to return an array so that we have compatibility
@@ -32,8 +32,9 @@ exports.getByCit = function(req, res) {
 		.then(
             function(a1) {
                 if (null === a1) {
-                    return sendJsonResponse(res, 404, {'message': 'a1Doc not found'});
+                    return sendJsonResponse(res, 404, {'message': 'No results found while searching by cit ' + req.query.cit});
                 } else {
+                    logger.info('Found a1Doc with cit %s while searching by cit %s', req.query.cit, a1.cit);
                     return sendJsonResponse(res, 200, a1);
                 }
             }
@@ -57,8 +58,9 @@ exports.getByNumeroTramite = function(req, res) {
         .then(
             function(a1) {
                 if (null === a1) {
-                    return sendJsonResponse(res, 404, {'message': 'a1Doc not found'});
+                    return sendJsonResponse(res, 404, {'message': 'No results found while searching by numeroTramite ' + req.query.numeroTramite});
                 } else {
+                    logger.info('Found a1Doc with numeroTramite %s while searching by numeroTramite %s', req.query.numeroTramite, a1.numeroTramite);
                     return sendJsonResponse(res, 200, a1);
                 }
             }
@@ -77,6 +79,7 @@ exports.findAll = function(req, res) {
         .exec()
         .then(
             function(a1s) {
+                logger.info('Found %i results while searching by all', a1s.length);
                 return sendJsonResponse(res, 200, a1s);
             }
         )
@@ -115,6 +118,7 @@ exports.create = function(req, res) {
     .exec()
     .then(
         function(a1) {
+            logger.info('A1Doc created with numeroTramite %s', a1.numeroTramite);
             return sendJsonResponse(res, 201, a1);
         }
     )
@@ -153,7 +157,12 @@ exports.update = function(req, res) {
         .exec()
         .then(
             function(a1) {
-                return sendJsonResponse(res, 200, a1);
+                if (null === a1) {
+                    return sendJsonResponse(res, 404, {'message': 'No results found while searching by numeroTramite ' + req.params.numeroTramite});
+                } else {
+                    logger.info('A1Doc updated by numeroTramite %s', a1.numeroTramite);
+                    return sendJsonResponse(res, 200, a1);
+                }
             }
         )
         .catch(
@@ -178,6 +187,7 @@ exports.deleteByNumeroTramite = function(req, res) {
         .exec()
         .then(
             function(a1) {
+                logger.info('A1Doc deleted by numeroTramite %s', a1.numeroTramite);
                 return sendJsonResponse(res, 204, a1);
             }
         )

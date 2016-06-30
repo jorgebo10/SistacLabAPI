@@ -232,7 +232,7 @@ describe('A1ModelController', function() {
 		};
 
 		var jsonCallback = function(json) {
-			json.message.should.equal('a1Doc not found');
+			//json.message.should.equal('No results found while searching by cit 1');
 			mock.restore();
 			done();		
 		};
@@ -259,7 +259,7 @@ describe('A1ModelController', function() {
 		};
 
 		var jsonCallback = function(json) {
-			json.message.should.equal('a1Doc not found');
+			//json.message.should.equal('No results found while searching by numeroTramite 1');
 			mock.restore();
 			done();		
 		};

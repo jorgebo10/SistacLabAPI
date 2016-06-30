@@ -15,6 +15,8 @@ var sendJsonResponse = function(res, status, content) {
 };
 
 exports.getByCit = function(req, res) {
+    logger.debug('Entering A1Controller#getByCit(req.query.cit={%s})', req.query.cit);
+
     if (!req.query || !req.query.cit) {
         return sendJsonResponse(res, 404, {
             'message': 'cit not found in request params'
@@ -44,10 +46,14 @@ exports.getByCit = function(req, res) {
                 return sendJsonResponse(res, 400, err);
             }
         );
+
+    logger.debug('Leaving A1Controller#getByCit');
 };
 
 
 exports.getByNumeroTramite = function(req, res) {
+    logger.debug('Entering A1Controller#getByNumeroTramite(req.query.numeroTramite={%s})', req.query.numeroTramite);
+
     if (!req.query || !req.query.numeroTramite) {
         return sendJsonResponse(res, 404, {
             'message': 'numeroTramite not found in request params'
@@ -70,10 +76,12 @@ exports.getByNumeroTramite = function(req, res) {
                 return sendJsonResponse(res, 400, err);
             }
         );
+
+    logger.debug('Leaving A1Controller#getByNumeroTramite');
 };
 
 exports.findAll = function(req, res) {
-    logger.debug('Entering findAll');
+    logger.debug('Entering A1Controller#findAll');
     A1
         .find()
         .select('-sequence -__v')
@@ -89,7 +97,7 @@ exports.findAll = function(req, res) {
                 return sendJsonResponse(res, 400, err);
             }
         );
-    logger.debug('Leaving findAll');
+    logger.debug('Leaving A1Controller#findAll');
 };
 
 exports.create = function(req, res) {

@@ -6,14 +6,13 @@ var winston = require('winston');
 winston.emitErrs = true;
 
 var path = require('path');
-
-var logsDir = path.normalize(__dirname + '/../../logs');
+var config = require('../../config/environment');
 
 var logger = new winston.Logger({
 	transports: [
 		new winston.transports.File({
 			name: 'info-file',
-			filename: logsDir + '/all-logs.log',
+			filename: config.logsDir + '/all-logs.log',
 			level: 'debug',
 			maxsize: 5242880,
 			maxFiles: 5,

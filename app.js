@@ -23,7 +23,7 @@ require('./config/express')(app);
 require('./config/routes')(app);
 
 app.listen(config.port, config.ip, function () {
-	logger.info('Express server listening on %d, in %s mode', config.port, config.env);
+	logger.info('Express server listening on %d, in %s mode and logging into %s', config.port, config.env, config.logsDir);
 	if (config.env === 'development') {
 		logger.warn('Application running in development mode');
 	}

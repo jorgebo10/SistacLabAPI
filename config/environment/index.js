@@ -17,6 +17,8 @@ function requiredProcessEnv(name) {
 var all = {
   env: process.env.NODE_ENV || 'development',
 
+  logsDir: path.normalize(__dirname + '/../../logs'),
+
   // Root path of server
   root: path.normalize(__dirname + '/../../..'),
 

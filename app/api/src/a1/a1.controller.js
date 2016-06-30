@@ -73,13 +73,14 @@ exports.getByNumeroTramite = function(req, res) {
 };
 
 exports.findAll = function(req, res) {
+    logger.debug('Entering findAll');
     A1
         .find()
         .select('-sequence -__v')
         .exec()
         .then(
             function(a1s) {
-                logger.info('Found %i results while searching by all', a1s.length);
+                logger.info('Found %d results while searching by all', a1s.length);
                 return sendJsonResponse(res, 200, a1s);
             }
         )
@@ -88,6 +89,7 @@ exports.findAll = function(req, res) {
                 return sendJsonResponse(res, 400, err);
             }
         );
+    logger.debug('Leaving findAll');
 };
 
 exports.create = function(req, res) {
@@ -127,6 +129,7 @@ exports.create = function(req, res) {
             return sendJsonResponse(res, 400, err);
         }
     );
+    logger.debug('Leaving A1Controller#create');
 };
 
 exports.update = function(req, res) {

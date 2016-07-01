@@ -76,7 +76,7 @@ describe('A1ModelController', function() {
 		A1Controller.getByCit(req, res);
 	});
 
-	it('should return 400 if promise is rejected while looking by numeroTramite', function(done) {
+	it('should return 400 if promise is rejected while looking by cit', function(done) {
 		var mock = sinon.mock(A1Model);
 
 		var statusCallback = function(status) {
@@ -116,7 +116,7 @@ describe('A1ModelController', function() {
 			done();		
 		};
 		
-		var req = { query: {numeroTramite: '1'}};
+		var req = { params: {numeroTramite: '1'}};
 		var res = { 
 			status: statusCallback,
 			json: jsonCallback
@@ -196,7 +196,7 @@ describe('A1ModelController', function() {
 			json.message.should.equal('numeroTramite not found in request params');
 		};
 		
-		var req = { query: {numeroTramite:''}};
+		var req = { params: {numeroTramite:''}};
 		var res = { 
 			status: statusCallback,
 			json: jsonCallback
@@ -215,7 +215,7 @@ describe('A1ModelController', function() {
 			done();
 		};
 		
-		var req = { query: {}};
+		var req = { params: {}};
 		var res = { 
 			status: statusCallback,
 			json: jsonCallback
@@ -232,7 +232,7 @@ describe('A1ModelController', function() {
 		};
 
 		var jsonCallback = function(json) {
-			//json.message.should.equal('No results found while searching by cit 1');
+			json.message.should.equal('No results found while searching by cit 1');
 			mock.restore();
 			done();		
 		};
@@ -259,12 +259,12 @@ describe('A1ModelController', function() {
 		};
 
 		var jsonCallback = function(json) {
-			//json.message.should.equal('No results found while searching by numeroTramite 1');
+			json.message.should.equal('No results found while searching by numeroTramite 1');
 			mock.restore();
 			done();		
 		};
 		
-		var req = { query: {numeroTramite: '1'}};
+		var req = { params: {numeroTramite: '1'}};
 		var res = { 
 			status: statusCallback,
 			json: jsonCallback
@@ -292,7 +292,7 @@ describe('A1ModelController', function() {
 			done();		
 		};
 		
-		var req = { query: {numeroTramite: '1'}};
+		var req = { params: {numeroTramite: '1'}};
 		var res = { 
 			status: statusCallback,
 			json: jsonCallback

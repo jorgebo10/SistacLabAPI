@@ -15,11 +15,11 @@ router.get('/', function(req, res, next) {
 		controller.findAll(req, res);
 	}
 });
-router.get('/:id', controller.getByNumeroTramite);
+router.get('/:numeroTramite', controller.getByNumeroTramite);
 router.post('/', controller.create);
-router.put('/:id', controller.update);
-router.patch('/:id', controller.update);
-router.delete('/:id', controller.deleteByNumeroTramite);
+router.put('/:numeroTramite', controller.update);
+router.patch('/:numeroTramite', controller.update);
+router.delete('/:numeroTramite', controller.deleteByNumeroTramite);
 
 module.exports = router;
 }());

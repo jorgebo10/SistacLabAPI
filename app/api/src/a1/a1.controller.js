@@ -52,21 +52,21 @@ exports.getByCit = function(req, res) {
 
 
 exports.getByNumeroTramite = function(req, res) {
-    logger.debug('Entering A1Controller#getByNumeroTramite(req.query.numeroTramite={%s})', req.query.numeroTramite);
+    logger.debug('Entering A1Controller#getByNumeroTramite(req.query.numeroTramite={%s})', req.params.numeroTramite);
 
-    if (!req.query || !req.query.numeroTramite) {
+    if (!req.params || !req.params.numeroTramite) {
         return sendJsonResponse(res, 404, {
             'message': 'numeroTramite not found in request params'
         });
     }
     A1
-        .getByNumeroTramite(req.query.numeroTramite)
+        .getByNumeroTramite(req.params.numeroTramite)
         .then(
             function(a1) {
                 if (null === a1) {
-                    return sendJsonResponse(res, 404, {'message': 'No results found while searching by numeroTramite ' + req.query.numeroTramite});
+                    return sendJsonResponse(res, 404, {'message': 'No results found while searching by numeroTramite ' + req.params.numeroTramite});
                 } else {
-                    logger.info('Found a1Doc with numeroTramite %s while searching by numeroTramite %s', req.query.numeroTramite, a1.numeroTramite);
+                    logger.info('Found a1Doc with numeroTramite %s while searching by numeroTramite %s', req.params.numeroTramite, a1.numeroTramite);
                     return sendJsonResponse(res, 200, a1);
                 }
             }
@@ -172,7 +172,7 @@ exports.update = function(req, res) {
                     return sendJsonResponse(res, 404, {'message': 'No results found while searching by numeroTramite ' + req.params.numeroTramite});
                 } else {
                     logger.info('A1Doc updated by numeroTramite %s', a1.numeroTramite);
-                    return sendJsonResponse(res, 200, a1);
+                    return sendJsonResponse(res, 200, a1.numeroTramite);
                 }
             }
         )

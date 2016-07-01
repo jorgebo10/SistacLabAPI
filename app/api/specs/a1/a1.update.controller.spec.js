@@ -152,7 +152,7 @@ describe('A1ModelController', function() {
 		};
 
 		var jsonCallback = function(json) {
-			json.should.equal(a1);
+			json.should.equal(a1.numeroTramite);
 			mock.restore();
 			done();		
 		};

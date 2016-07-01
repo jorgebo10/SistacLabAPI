@@ -16,10 +16,14 @@ var logger = new winston.Logger({
 			level: 'debug',
 			maxsize: 5242880,
 			maxFiles: 5,
+			json: true,
+			timestamp: true,
+			handleExceptions: true,
 			colorize: false
 		}),
 		new winston.transports.Console({
 			level: 'debug',
+			timestamp: true,
 			handleExceptions: true,
 			json: false,
 			colorize: true 

@@ -101,6 +101,7 @@ exports.findAll = function(req, res) {
 };
 
 exports.create = function(req, res) {
+    logger.debug('Entering A1Controller#create(req.body={%s}', req.body);
     if (!req.body.numeroTramite) {
         return sendJsonResponse(res, 404, {
             'message': 'numeroTramite not found'
@@ -141,6 +142,7 @@ exports.create = function(req, res) {
 };
 
 exports.update = function(req, res) {
+    logger.debug('Entering A1Controller#update %j', req.body);
     if (!req.params || !req.params.numeroTramite) {
         return sendJsonResponse(res, 404, {
             'message': 'numeroTramite not found in request params'
@@ -181,9 +183,11 @@ exports.update = function(req, res) {
                 return sendJsonResponse(res, 400, err);
             }
         );
+    logger.debug('Leaving A1Controller#update');
 };
 
 exports.deleteByNumeroTramite = function(req, res) {
+    logger.debug('Entering A1Controller#deleteByNumeroTramite(req.params.numeroTramite={%s}', req.params.numeroTramite);
     var numeroTramite = req.params.numeroTramite;
     if (!numeroTramite) {
         return sendJsonResponse(res, 404, {
@@ -207,5 +211,6 @@ exports.deleteByNumeroTramite = function(req, res) {
                 return sendJsonResponse(res, 400, err);
             }
         );
+    logger.debug('Entering A1Controller#deleteByNumeroTramite');
 };
 }());

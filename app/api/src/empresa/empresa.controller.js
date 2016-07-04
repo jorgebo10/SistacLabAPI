@@ -1,64 +1,91 @@
 (function() {
 'use strict';
 
-var mongoose = require('mongoose');
-var Informe = require('../informe/informe.model');
+/* jshint node: true */
+
 var Empresa = require('./empresa.model');
-var config = require('../../config/environment');
+var logger = require('../../../utils/logger');
+var config = require('../../../../config/environment');
 var jwt = require('jsonwebtoken');
-var winston = require('winston');
-var sistacLoggerError = winston.loggers.get('sistac-error');
 
 var sendJsonResponse = function(res, status, content) {
     res.status(status);
     res.json(content);
     if (400 === status || 404 === status) {
-        sistacLoggerError.error(content);
+        logger.error(content);
     }
 };
 
-exports.index = function(req, res) {
+exports.findAll = function(req, res) {
+    logger.debug('Entering EmpresaController#findAll');
+
     Empresa
-        .find({
-            active: true
-        })
+        .find()
         .select('-sequence -__v')
-        .exec(
-            function(err, a1s) {
-                if (err) {
-                    return sendJsonResponse(res, 400, err);
-                }
-                return sendJsonResponse(res, 200, a1s);
+        .exec()
+        .then(
+            function(empresas) {
+                logger.info('Found %d results while searching by all', empresas.length);
+                return sendJsonResponse(res, 200, empresas);
+            }
+        )
+        .catch(
+            function(err) {
+                return sendJsonResponse(res, 400, err);
             }
         );
+
+    logger.debug('Leaving EmpresaController#findAll');
 };
 
-exports.getById = function(req, res) {
-    if (!req.params || !req.params.id) {
+exports.getByCodigo = function(req, res) {
+    logger.debug('Entering EmpresaController#getByCodigo(req.params.codigo={%s})', req.params.codigo);
+
+    if (!req.params || !req.params.codigo) {
         return sendJsonResponse(res, 404, {
-            'message': 'id not found in request params'
+            'message': 'codigo not found in request params'
         });
     }
+
     Empresa
-        .findById(req.params.id)
-        .select('-sequence -__v')
-        .exec(
-            function(err, empresa) {
-                if (err) {
-                    return sendJsonResponse(res, 400, err);
-                } else if (!empresa) {
-                    return sendJsonResponse(res, 404, {
-                        'message': 'empresa not found by id: ' + req.params.id
-                    });
+        .getByCodigo(req.params.codigo)
+        .exec()
+        .then(
+            function(empresa) {
+                if (null === empresa) {
+                    return sendJsonResponse(res, 404, {'message': 'No results found while searching by codigo ' + req.params.codigo});
                 } else {
+                    logger.info('Found empresa with codigo %s while searching by codigo %s', empresa.codigo, req.params.codigo);
                     return sendJsonResponse(res, 200, empresa);
                 }
             }
+        )
+        .catch(
+            function(err) {
+                return sendJsonResponse(res, 400, err);
+            }
         );
+
+    logger.debug('Leaving EmpresaController#getByCodigo');
 };
 
 exports.create = function(req, res) {
+    logger.debug('Entering EmpresaController#create(req.body={%s}', req.body);
+    
+    if (!req.body.codigo) {
+        return sendJsonResponse(res, 404, {
+            'message': 'codigo not found'
+        });
+    }
+
+    if (!req.body.email) {
+        return sendJsonResponse(res, 404, {
+            'message': 'email not found'
+        });
+    }
+
     Empresa.create({
+        codigo: req.body.codigo,
         nombre: req.body.nombre,
         razonSocial: req.body.razonSocial,
         direccion: req.body.direccion,
@@ -68,121 +95,143 @@ exports.create = function(req, res) {
         token: req.body.token,
         contacto: req.body.contact,
         imagen: req.body.imagen !== undefined ? req.body.imagen.src : ''
-    }, function(err, empresa) {
-        return err ? sendJsonResponse(res, 400, err) : sendJsonResponse(res, 201, empresa);
-    });
+    })
+    .exec()
+    .then(
+        function(empresa) {
+            logger.info('Empresa created with codigo %s', empresa.codigo);
+            return sendJsonResponse(res, 201, empresa);
+        }
+    )
+    .catch(
+        function(err) {
+            return sendJsonResponse(res, 400, err);
+        }
+    );
+
+    logger.debug('Leaving EmpresaController#create');
 };
 
 exports.update = function(req, res) {
-    if (!req.params || !req.params.id) {
+  logger.debug('Entering EmpresaController#update %j', req.body);
+
+    if (!req.params || !req.params.codigo || !req.body.email) {
         return sendJsonResponse(res, 404, {
-            'message': 'id not found in request params'
+            'message': 'codigo email not found in request params or email not found in request body'
         });
     }
+
     Empresa
-        .findById(req.params.id)
-        .exec(
-            function(err, empresa) {
-                if (err) {
-                    return sendJsonResponse(res, 400, err);
-                } else if (!empresa) {
-                    return sendJsonResponse(res, 404, {
-                        'message': 'Empresa not found by id:' + req.params.id
-                    });
+        .findOneAndUpdate({codigo: req.params.codigo}, { 
+            codigo: req.body.codigo,
+            nombre: req.body.nombre,
+            razonSocial: req.body.razonSocial,
+            direccion: req.body.direccion,
+            telefono: req.body.telefono,
+            email: req.body.email,
+            password: req.body.password,
+            token: req.body.token,
+            contacto: req.body.contact,
+            imagen: req.body.imagen !== undefined ? req.body.imagen.src : ''
+        }, {runValidators: true})
+        .exec()
+        .then(
+            function(empresa) {
+                if (null === empresa) {
+                    return sendJsonResponse(res, 404, {'message': 'No results found while searching by codigo ' + req.params.codigo});
+                } else {
+                    logger.info('Empresa updated by codigo %s', empresa.codigo);
+                    return sendJsonResponse(res, 200, empresa.codigo);
                 }
-                empresa.nombre = req.body.nombre;
-                empresa.razonSocial = req.body.razonSocial;
-                empresa.direccion = req.body.direccion;
-                empresa.telefono = req.body.telefono;
-                empresa.email = req.body.email;
-                empresa.password = req.body.password;
-                empresa.token = req.body.token;
-                empresa.contacto = req.body.contact;
-                empresa.imagen = req.body.imagen !== undefined ? req.body.imagen.src : '';
-                empresa.save(
-                    function(err, empresa) {
-                        return err ? sendJsonResponse(res, 400, err) : sendJsonResponse(res, 200, empresa);
-                    }
-                );
+            }
+        )
+        .catch(
+            function(err) {
+                return sendJsonResponse(res, 400, err);
             }
         );
+
+    logger.debug('Leaving EmpresaController#update');
 };
 
-exports.delete = function(req, res) {
-    var id = req.params.id;
-    if (id) {
-        Informe
-            .findOne({
-                empresa: new mongoose.mongo.ObjectID(id)
-            })
-            .select('_id')
-            .exec(
-                function(err, empresa) {
-                    if (empresa) {
-                        return sendJsonResponse(res, 400, {
-                            'message': 'Informes are associated to empresa'
-                        });
-                    } else {
-                        Empresa
-                            .findByIdAndRemove(id)
-                            .exec(
-                                function(err) {
-                                    if (err) {
-                                        return sendJsonResponse(res, 404, err);
-                                    }
-                                    return sendJsonResponse(res, 204, null);
-                                }
-                            );
-                    }
+exports.deleteByCodigo = function(req, res) {
+    logger.debug('Entering EmpresaController#deleteByCodigo(req.params.codigo={%s}', req.params.codigo);
+
+    var codigo = req.params.codigo;
+    if (!codigo) {
+        return sendJsonResponse(res, 404, {
+            'message': 'codigo not found'
+        });
+    }
+
+    Empresa
+        .findOneAndRemove({
+            codigo: codigo
+        })
+        .exec()
+        .then(
+            function(empresa) {
+                logger.info('Empresa deleted by codigo %s', empresa.codigo);
+                return sendJsonResponse(res, 204, empresa);
+            }
+        )
+        .catch(
+            function(err) {
+                return sendJsonResponse(res, 400, err);
+            }
+        );
+
+    logger.debug('Entering EmpresaController#deleteByCodigo');
+};
+
+exports.resetToken = function(req, res, next) {
+    logger.debug('Entering EmpresaController#resetToken(req.params.codigo={%s}', req.params.codigo);
+
+    if (!req.body || !req.body.codigo || !req.body.password) {
+        return sendJsonResponse(res, 404, {
+            'message': 'Codigo and password not found in request body'
+        });
+    }
+
+    var codigo = String(req.body.codigo).toUpperCase();
+    var password = String(req.body.password);
+
+    Empresa
+        .getByCodigo(codigo)
+        .then(
+            function(empresa) {
+                if (null === empresa) {
+                    return sendJsonResponse(res, 404, {
+                        'message': 'Empresa not found by codigo: ' + req.body.codigo
+                    });
                 }
-            );
-    } else {
-        return sendJsonResponse(res, 404, {
-            'message': 'Empresa not found by id: ' + id
-        });
-    }
-};
 
-exports.syncTokenRequest = function(req, res, next) {
-    if (!req.body || !req.body.nombre || !req.body.password) {
-        return sendJsonResponse(res, 404, {
-            'message': 'Credentials not found in request body'
-        });
-    }
+                if (empresa.password !== password) {
+                    res.setHeader('WWW-Authenticate', 'codigo:password incorrect');
+                    return sendJsonResponse(res, 401, {
+                        'message': 'Authetication failure'
+                    });
+                } else {
+                    var token = jwt.sign({
+                        _id: empresa._id
+                    }, config.secrets.mobileAuthToken, {
+                        expiresInMinutes: config.secrets.mobileAuthTokenExpiresInMinutes
+                        }
+                    );
+                    return res.json({
+                        email: empresa.email,
+                        codigo: empresa.codigo,
+                        token: token
+                    });
+                }
+            }
+        )
+        .catch(
+            function(err) {
+                return sendJsonResponse(res, 400, err);
+            }
+        );
 
-    var nombre = String(req.body.nombre).toUpperCase();
-    var pass = String(req.body.password);
-
-    Empresa.findOne({
-        nombre: nombre
-    }, function(err, empresa) {
-        if (err) {
-            return next(err);
-        }
-
-        if (!empresa) {
-            return sendJsonResponse(res, 404, {
-                'message': 'Empresa not found by nombre: ' + nombre
-            });
-        }
-
-        if (empresa.password !== pass) {
-            res.setHeader('WWW-Authenticate', 'empresa:pass incorrect');
-            return sendJsonResponse(res, 401, {
-                'message': 'Authetication failure'
-            });
-        } else {
-            var token = jwt.sign({
-                _id: empresa._id
-            }, config.secrets.mobileAuthToken, {
-                expiresInMinutes: 30 * 24 * 60
-            });
-            return res.json({
-                email: empresa.email,
-                name: empresa.razonSocial,
-                token: token
-            });
-        }
-    });
+    logger.debug('Leaving EmpresaController#resetToken');
 };
 }());

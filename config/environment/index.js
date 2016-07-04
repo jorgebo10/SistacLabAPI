@@ -24,6 +24,7 @@ var all = {
   // Secret for session, you will want to change this and make it an environment variable
   secrets: {
     mobileAuthToken: 'sistac-mobile-secret',
+    mobileAuthTokenExpiresInMinutes: process.env.EXPIRATION_TIME_IN_MINUTES || 30 * 24 * 60,
     session: 'sistac-secret'
   },
 

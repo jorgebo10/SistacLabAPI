@@ -27,29 +27,23 @@ var A1Schema = new Schema({
         default: false
     },
     nombreInstalacion: {
-        type: String,
-        default: ''
+        type: String
     },
     normaFabricacion: String,
     fabricante: {
-        type: String,
-        default: ''
+        type: String
     },
     matricula: {
-        type: String,
-        default: ''
+        type: String
     },
     estado: {
-        type: String,
-        default: ''
+        type: String
     },
     observaciones: {
-        type: String,
-        default: ''
+        type: String
     },
     numeroInterno: {
-        type: String,
-        default: ''
+        type: String
     },
     laminasInspeccionadas: {
         type: Number,
@@ -70,16 +64,14 @@ var A1Schema = new Schema({
         default: 1800
     },
     placaIdentificacion: {
-        type: String,
-        default: ''
+        type: String
     },
     temperaturaOperacion: {
         type: String,
         default: 'Ambiente'
     },
     especificacionChapas: {
-        type: String,
-        default: ''
+        type: String
     }
 });
 

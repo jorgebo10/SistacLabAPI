@@ -52,7 +52,7 @@ exports.getByCit = function(req, res) {
 
 
 exports.getByNumeroTramite = function(req, res) {
-    logger.debug('Entering A1Controller#getByNumeroTramite(req.query.numeroTramite={%s})', req.params.numeroTramite);
+    logger.debug('Entering A1Controller#getByNumeroTramite(req.params.numeroTramite={%s})', req.params.numeroTramite);
 
     if (!req.params || !req.params.numeroTramite) {
         return sendJsonResponse(res, 404, {

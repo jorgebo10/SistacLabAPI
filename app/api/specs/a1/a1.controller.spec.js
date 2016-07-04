@@ -39,6 +39,8 @@ describe('A1ModelController', function() {
 	});
 
 	it('should return cit not found in params if cit is empty in the request', function(done) {
+		var mock = sinon.mock(A1Model);
+
 		var statusCallback = function(status) {
 			status.should.equal(404);
 			done();
@@ -58,6 +60,8 @@ describe('A1ModelController', function() {
 	});
 
 	it('should return cit not found in params if cit is not sent in the request', function(done) {
+		var mock = sinon.mock(A1Model);
+
 		var statusCallback = function(status) {
 			status.should.equal(404);
 		};
@@ -187,7 +191,7 @@ describe('A1ModelController', function() {
 	});
 
 	it('should return numeroTramite not found in params if it is empty in the request', function(done) {
-		var statusCallback = function(status) {
+				var mock = sinon.mock(A1Model);var statusCallback = function(status) {
 			status.should.equal(404);
 			done();
 		};
@@ -206,6 +210,8 @@ describe('A1ModelController', function() {
 	});
 
 	it('should return numeroTramite not found in params if numero tramite is not sent in the request', function(done) {
+		var mock = sinon.mock(A1Model);
+		
 		var statusCallback = function(status) {
 			status.should.equal(404);
 		};
@@ -280,6 +286,7 @@ describe('A1ModelController', function() {
 
 	it('should return 200 if a1Doc is found by numeroTramite', function(done) {
 		var mock = sinon.mock(A1Model);
+
 		var a1 = {numeroTramite: '1'};
 
 		var statusCallback = function(status) {

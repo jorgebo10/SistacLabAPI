@@ -33,6 +33,13 @@ var EmpresaSchema = new Schema({
   imagen: String
 });
 
+EmpresaSchema.static('getByCodigo', function(codigo) {
+  return this
+        .findOne({codigo: codigo})
+    .select('-sequence -__v')
+    .exec();
+});
+
 /*
 EmpresaSchema.plugin(autoIncrement.plugin, {
   model: 'Empresa',

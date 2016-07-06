@@ -49,7 +49,6 @@ exports.getByCodigo = function(req, res) {
 
     Empresa
         .getByCodigo(req.params.codigo)
-        .exec()
         .then(
             function(empresa) {
                 if (null === empresa) {

@@ -82,7 +82,6 @@ A1Schema.static('getByCit', function(cit) {
 		.exec();
 });
 
-
 A1Schema.static('getByNumeroTramite', function(numeroTramite) {
     return this
         .findOne({ numeroTramite: numeroTramite })

@@ -180,5 +180,57 @@ describe('EmpresaController', function() {
 
 		EmpresaController.update(req, res);
 	});
+
+	it('should return 200 while updating with image ok', function(done) {
+		var mock = sinon.mock(EmpresaModel);
+		var empresa = {codigo: '1', email: 'pepe@gmail.com'};
+
+		var statusCallback = function(status) {
+			status.should.equal(200);
+		};
+
+		var jsonCallback = function(json) {
+			json.should.equal(empresa.codigo);
+			mock.restore();
+			done();		
+		};
+		
+		var req = {
+			params: {
+				codigo: empresa.codigo,
+				email: empresa.email
+			}, 
+			body: { 
+				codigo: empresa.codigo,
+				email: empresa.email,
+				imagen: {src: 'oo'}
+			}
+		};
+
+		var res = { 
+			status: statusCallback,
+			json: jsonCallback
+		};
+
+		mock
+			.expects('findOneAndUpdate')
+			.withArgs({codigo: req.body.codigo},{
+				codigo: req.body.codigo,
+				nombre: undefined,
+				razonSocial: undefined,
+				direccion: undefined,
+				telefono: undefined,
+				email: req.body.email,
+				password: undefined,
+				token: undefined,
+				contacto: undefined,
+				imagen: req.body.imagen.src},
+				{runValidators: true}
+			)
+			.chain('exec')
+			.resolves(empresa);
+
+		EmpresaController.update(req, res);
+	});
 });
 }());

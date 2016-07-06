@@ -120,6 +120,55 @@ describe('EmpresaController', function() {
 		EmpresaController.create(req, res);
 	});
 
+it('should return 201 while creating with image', function(done) {
+		var mock = sinon.mock(EmpresaModel);
+		var empresa = {
+			codigo: '1', 
+			email: 'pepe@gmail.com'
+		};
+
+		var statusCallback = function(status) {
+			status.should.equal(201);
+		};
+
+		var jsonCallback = function(json) {
+			json.should.equal(empresa);
+			mock.restore();
+			done();		
+		};
+		
+		var req = { 
+			body: { 
+				codigo: empresa.codigo,
+				email: empresa.email,
+				imagen: {src: 'oooo'}
+			}
+		};
+
+		var res = { 
+			status: statusCallback,
+			json: jsonCallback
+		};
+
+		mock
+			.expects('create')
+			.withArgs({
+				codigo: req.body.codigo,
+				nombre: undefined,
+				razonSocial: undefined,
+				direccion: undefined,
+				telefono: undefined,
+				email: req.body.email,
+				password: undefined,
+				token: undefined,
+				contacto: undefined,
+				imagen: req.body.imagen.src
+			})
+			.chain('exec')
+			.resolves(empresa);
+
+		EmpresaController.create(req, res);
+	});
 	it('should return 400 if error while creating', function(done) {
 		var mock = sinon.mock(EmpresaModel);
 		var empresa = {codigo: '1', email: 'pepe@gmail.com'};

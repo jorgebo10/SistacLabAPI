@@ -71,15 +71,9 @@ exports.getByCodigo = function(req, res) {
 exports.create = function(req, res) {
     logger.debug('Entering EmpresaController#create(req.body={%s}', req.body);
     
-    if (!req.body.codigo) {
+    if (!req.body.codigo || !req.body.email) {
         return sendJsonResponse(res, 404, {
-            'message': 'codigo not found'
-        });
-    }
-
-    if (!req.body.email) {
-        return sendJsonResponse(res, 404, {
-            'message': 'email not found'
+            'message': 'codigo or email not found in request params or email not found in request body'
         });
     }
 
@@ -116,7 +110,7 @@ exports.update = function(req, res) {
 
     if (!req.params || !req.params.codigo || !req.body.email) {
         return sendJsonResponse(res, 404, {
-            'message': 'codigo email not found in request params or email not found in request body'
+            'message': 'codigo or email not found in request params or email not found in request body'
         });
     }
 
@@ -156,16 +150,16 @@ exports.update = function(req, res) {
 exports.deleteByCodigo = function(req, res) {
     logger.debug('Entering EmpresaController#deleteByCodigo(req.params.codigo={%s}', req.params.codigo);
 
-    var codigo = req.params.codigo;
-    if (!codigo) {
+
+    if (!req.params.codigo) {
         return sendJsonResponse(res, 404, {
-            'message': 'codigo not found'
+            'message': 'codigo not found in request params'
         });
     }
 
     Empresa
         .findOneAndRemove({
-            codigo: codigo
+            codigo: req.params.codigo
         })
         .exec()
         .then(

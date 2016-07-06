@@ -7,25 +7,25 @@ require('sinon-as-promised');
 require('sinon-mongoose');
 var should = require('chai').should();
 
-describe('A1ModelController', function() {
-	var A1Controller = require('../../src/a1/a1.controller.js');
-	var A1Model = require('../../src/a1/a1.model.js');
+describe('EmpresaModelController', function() {
+	var EmpresaController = require('../../src/empresa/empresa.controller.js');
+	var EmpresaModel = require('../../src/empresa/empresa.model.js');
 
-	it('should return 204 if a1 was removed ok', function(done) {
-		var mock = sinon.mock(A1Model);
-		var a1 = {numeroTramite: '1'};
+	it('should return 204 if empresa was removed ok', function(done) {
+		var mock = sinon.mock(EmpresaModel);
+		var empresa = {codigo: '1'};
 
 		var statusCallback = function(status) {
 			status.should.equal(204);
 		};
 
 		var jsonCallback = function(json) {
-			json.should.equal(a1);
+			json.should.equal(empresa);
 			mock.restore();
 			done();		
 		};
 		
-		var req = { params: {numeroTramite: '1'} };
+		var req = { params: {codigo: '1'} };
 		var res = { 
 			status: statusCallback,
 			json: jsonCallback
@@ -34,14 +34,14 @@ describe('A1ModelController', function() {
 		mock
 			.expects('findOneAndRemove')
 			.chain('exec')
-			.resolves(a1);
+			.resolves(empresa);
 		
-		A1Controller.deleteByNumeroTramite(req, res);
+		EmpresaController.deleteByCodigo(req, res);
 	});
 
-	it('should return 400 if there was an error while removing a1Doc', function(done) {
-		var mock = sinon.mock(A1Model);
-		var a1 = {numeroTramite: '1'};
+	it('should return 400 if there was an error while removing empresa', function(done) {
+		var mock = sinon.mock(EmpresaModel);
+		var empresa = {codigo: '1'};
 
 		var statusCallback = function(status) {
 			status.should.equal(400);
@@ -53,7 +53,7 @@ describe('A1ModelController', function() {
 			done();		
 		};
 		
-		var req = { params: {numeroTramite: '1'} };
+		var req = { params: {codigo: '1'} };
 		var res = { 
 			status: statusCallback,
 			json: jsonCallback
@@ -64,37 +64,39 @@ describe('A1ModelController', function() {
 			.chain('exec')
 			.rejects('error');
 		
-		A1Controller.deleteByNumeroTramite(req, res);
+		EmpresaController.deleteByCodigo(req, res);
 	});
 
-	it('should return 404 if a1Doc not found by numeroTramite while deleting', function(done) {
+	it('should return 404 if empresa not found by codigo while deleting', function(done) {
 
 		var statusCallback = function(status) {
 			status.should.equal(404);
 		};
 
 		var jsonCallback = function(json) {
-			json.message.should.equal('a1Doc not found');
+			json.message.should.equal('codigo not found in request params');
 			done();		
 		};
 		
-		var req = { params: {numeroTramite: ''}};
+		var req = { params: {codigo: ''}};
 		var res = { 
 			status: statusCallback,
 			json: jsonCallback
 		};
 
-		A1Controller.deleteByNumeroTramite(req, res);
+		EmpresaController.deleteByCodigo(req, res);
 	});
 
-	it('should return 404 if a1Doc not sent by numeroTramite while deleting', function(done) {
+	it('should return 404 if empresa not sent by codigo while deleting', function(done) {
+		var mock = sinon.mock(EmpresaModel);
 
 		var statusCallback = function(status) {
 			status.should.equal(404);
 		};
 
 		var jsonCallback = function(json) {
-			json.message.should.equal('a1Doc not found');
+			json.message.should.equal('codigo not found in request params');
+			mock.restore();
 			done();		
 		};
 		
@@ -104,7 +106,7 @@ describe('A1ModelController', function() {
 			json: jsonCallback
 		};
 
-		A1Controller.deleteByNumeroTramite(req, res);
+		EmpresaController.deleteByCodigo(req, res);
 	});
 });
 }());

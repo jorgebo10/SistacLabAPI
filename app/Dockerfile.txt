@@ -1,0 +1,15 @@
+FROM node:latest
+MANTAINER jorgebo10@gmail.com
+
+WORKDIR /data
+
+COPY SistacLabAPI /data/SistacLabAPI
+
+RUN npm install -g grunt-cli
+RUN npm install
+
+USER nobody
+
+EXPOSE 5000
+
+CMD["grunt"]

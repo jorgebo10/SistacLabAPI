@@ -3,10 +3,10 @@ FROM node:latest
 MAINTAINER jorgebo10@gmail.com
 
 # set default workdir
-WORKDIR /var/lib/jenkins/workspace/Testgithub
+WORKDIR /usr/src
 
 # Add package.json to allow for caching
-COPY * /usr/src/SistacLabAPI
+COPY * /usr/src
 
 # Install app dependencies
 RUN npm install

@@ -8,10 +8,10 @@ WORKDIR /usr/src
 # Add package.json to allow for caching
 COPY * /usr/src/
 
-# Install app dependencies
-RUN npm install
 
 RUN npm install -g grunt-cli
+
+RUN npm install
 
 # user to non-privileged user
 USER nobody

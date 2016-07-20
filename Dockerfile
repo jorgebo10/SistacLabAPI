@@ -19,4 +19,4 @@ USER nobody
 # Expose the application port and run application
 EXPOSE 9000
 
-RUN grunt jshint
+#RUN grunt jshint

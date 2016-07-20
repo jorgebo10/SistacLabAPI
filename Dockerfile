@@ -6,7 +6,13 @@ MAINTAINER jorgebo10@gmail.com
 WORKDIR /usr/src
 
 # Add package.json to allow for caching
-COPY * /usr/src/
+COPY app /usr/src/
+COPY app.js /usr/src/
+COPY config /usr/src/
+COPY public /usr/src/
+COPY coverage /usr/src/
+COPY logs /usr/src/
+COPY package.json /usr/src
 
 
 RUN npm install -g grunt-cli

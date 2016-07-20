@@ -6,12 +6,12 @@ MAINTAINER jorgebo10@gmail.com
 WORKDIR /usr/src
 
 # Add package.json to allow for caching
-COPY app /usr/src/
+COPY app /usr/src/app
 COPY app.js /usr/src/
-COPY config /usr/src/
-COPY public /usr/src/
-COPY coverage /usr/src/
-COPY logs /usr/src/
+COPY config /usr/src/config
+COPY public /usr/src/public
+COPY coverage /usr/src/coverage
+COPY logs /usr/src/logs
 COPY package.json /usr/src
 
 

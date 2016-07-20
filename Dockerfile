@@ -10,8 +10,6 @@ COPY app /usr/src/app
 COPY app.js /usr/src/
 COPY config /usr/src/config
 COPY public /usr/src/public
-COPY coverage /usr/src/coverage
-COPY logs /usr/src/logs
 COPY package.json /usr/src
 
 

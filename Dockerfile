@@ -6,7 +6,7 @@ MAINTAINER jorgebo10@gmail.com
 WORKDIR /usr/src
 
 # Add package.json to allow for caching
-COPY * /usr/src
+COPY * /usr/src/
 
 # Install app dependencies
 RUN npm install

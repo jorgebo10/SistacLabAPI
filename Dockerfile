@@ -3,16 +3,14 @@ FROM node:latest
 MAINTAINER jorgebo10@gmail.com
 
 # set default workdir
-WORKDIR /usr/src
+WORKDIR /usr/src/sistacLabAPI
 
-RUN mkdir /usr/src/sistacLabAPI
-
-COPY Gruntfile.js /usr/src/sistacLabAPI/
-COPY app /usr/src/sistacLabAPI/app/
-COPY app.js /usr/src/sistacLabAPI/
-COPY config /usr/src/sistacLabAPI/config/
-COPY public /usr/src/sistacLabAPI/public/
-COPY package.json /usr/src/sistacLabAPI/
+COPY Gruntfile.js /usr/src/
+COPY app /usr/src/app/
+COPY app.js /usr/src/
+COPY config /usr/src/config/
+COPY public /usr/src/public/
+COPY package.json /usr/src/
 
 RUN npm install
 

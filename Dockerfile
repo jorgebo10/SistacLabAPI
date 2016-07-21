@@ -5,7 +5,8 @@ MAINTAINER jorgebo10@gmail.com
 # set default workdir
 WORKDIR /usr/src
 
-# Add package.json to allow for caching
+RUN mkdir /usr/src/sistacLabAPI
+
 COPY Gruntfile.js /usr/src/sistacLabAPI/
 COPY app /usr/src/sistacLabAPI/app/
 COPY app.js /usr/src/sistacLabAPI/

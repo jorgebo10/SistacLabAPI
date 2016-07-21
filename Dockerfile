@@ -5,12 +5,12 @@ MAINTAINER jorgebo10@gmail.com
 # set default workdir
 WORKDIR /usr/src/sistacLabAPI
 
-COPY Gruntfile.js /usr/src/
-COPY app /usr/src/app/
-COPY app.js /usr/src/
-COPY config /usr/src/config/
-COPY public /usr/src/public/
-COPY package.json /usr/src/
+COPY app .
+COPY app.js .
+COPY config .
+COPY public .
+COPY package.json .
+COPY Gruntfile.js .
 
 RUN npm install
 
@@ -22,4 +22,3 @@ USER nobody
 # Expose the application port and run application
 EXPOSE 9000
 
-RUN grunt jshint

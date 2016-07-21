@@ -60,4 +60,5 @@ module.exports = function(grunt) {
 	
 	grunt.registerTask('default', ['jshint', 'mocha_istanbul:coverage', 'concurrent']);
 	grunt.registerTask('build', ['jshint', 'mocha_istanbul:coverage', 'copy']);
+	grunt.registerTask('unittest', ['jshint', 'mocha_istanbul:coverage']);
 };

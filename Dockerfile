@@ -18,6 +18,9 @@ RUN npm install -g grunt-cli
 
 RUN npm install
 
+RUN ["apt-get", "update"]
+RUN ["apt-get", "install", "-y", "vim"]
+
 # user to non-privileged user
 USER nobody
 

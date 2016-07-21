@@ -6,15 +6,16 @@ MAINTAINER jorgebo10@gmail.com
 WORKDIR /usr/src
 
 # Add package.json to allow for caching
+COPY Gruntfile.js /usr/src/sistacLabAPI/
 COPY app /usr/src/sistacLabAPI/app/
 COPY app.js /usr/src/sistacLabAPI/
 COPY config /usr/src/sistacLabAPI/config/
 COPY public /usr/src/sistacLabAPI/public/
 COPY package.json /usr/src/sistacLabAPI/
 
-RUN npm install -g grunt-cli
-
 RUN npm install
+
+RUN npm install -g grunt-cli
 
 # user to non-privileged user
 USER nobody

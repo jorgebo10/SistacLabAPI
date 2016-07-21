@@ -16,14 +16,8 @@ RUN npm install
 
 RUN npm install -g grunt-cli
 
-RUN npm install
-
-RUN ["apt-get", "update"]
-RUN ["apt-get", "install", "-y", "vim"]
+RUN grunt jshint
 
 # user to non-privileged user
 USER nobody
-
-# Expose the application port and run application
-EXPOSE 9000
 

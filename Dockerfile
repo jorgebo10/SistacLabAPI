@@ -22,4 +22,4 @@ USER nobody
 # Expose the application port and run application
 EXPOSE 9000
 
-RUN cd /usr/src/sistacLabAPI;grunt jshint
+RUN grunt jshint

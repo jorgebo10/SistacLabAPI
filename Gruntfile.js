@@ -17,8 +17,8 @@ module.exports = function(grunt) {
 
 
 		jshint: {
-			files: ['Gruntfile.js']
-		},
+            files: ['Gruntfile.js', 'app/**/*.js', 'config/**/*.js']
+        },
 
 		mocha_istanbul: {
 			coverage: {

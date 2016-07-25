@@ -5,10 +5,10 @@ MAINTAINER jorgebo10@gmail.com
 # set default workdir
 WORKDIR /usr/src/sistacLabAPI
 
-COPY app .
+COPY app ./app/
 COPY app.js .
-COPY config .
-COPY public .
+COPY config ./config/
+COPY public ./public/
 COPY package.json .
 COPY Gruntfile.js .
 

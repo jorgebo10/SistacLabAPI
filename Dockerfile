@@ -16,6 +16,8 @@ RUN npm install
 
 RUN npm install -g grunt-cli
 
+RUN grunt jshint
+
 # user to non-privileged user
 USER nobody
 

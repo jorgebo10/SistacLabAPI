@@ -12,4 +12,3 @@ RUN npm install -g grunt-cli
 
 USER docker
 
-CMD["npm","install"]

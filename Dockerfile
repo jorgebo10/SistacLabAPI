@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:4
 
 MAINTAINER jorgebo10@gmail.com
 

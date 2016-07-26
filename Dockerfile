@@ -1,6 +1,10 @@
 FROM ubuntu:14.04
 
-USER root
+RUN apt-get -y install sudo
+
+RUN useradd -m docker && echo "docker:docker" | chpasswd && adduser docker sudo
+
+USER docker
 RUN apt-get update
 RUN apt-get install -y curl
 RUN curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -

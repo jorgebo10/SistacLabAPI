@@ -1,10 +1,11 @@
-FROM node:5.0.0
+FROM node:latest
 
 MAINTAINER jorgebo10@gmail.com
 
+RUN npm install -g grunt-cli
+
 RUN npm install
 
-RUN npm install -g grunt-cli
 
 
 

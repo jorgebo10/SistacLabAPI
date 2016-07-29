@@ -1,5 +1,7 @@
 FROM ubuntu:14.04.3
 
+RUN groupadd -r docker && useradd -r -g docker docker
+
 # Replace shell with bash so we can source files
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
@@ -22,3 +24,5 @@ ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH      $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
 RUN npm install -g grunt-cli
+
+USE docker

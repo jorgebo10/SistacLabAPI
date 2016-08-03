@@ -1,8 +1,7 @@
 FROM ubuntu:14.04.3
 
-RUN addgroup --system --gid 1001 jenkins && \
-    adduser --system --uid 1001 --gid 1001 jenkins && \
-
+RUN addgroup --system --gid 1001 jenkins
+RUN useradd --system --no-create-home --uid 1001 --gid 1001 jenkins
 USER jenkins
 
 # Replace shell with bash so we can source files

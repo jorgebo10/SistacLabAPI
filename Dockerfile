@@ -1,6 +1,6 @@
 FROM ubuntu:14.04.3
 
-# RUN addgroup --system --gid 1001 jenkins && adduser --system --uid 1001 --gid 1001 --no-create-home jenkins
+RUN addgroup --system --gid 1001 jenkins && adduser --system --uid 1001 --gid 1001 --no-create-home jenkins
 
 # Replace shell with bash so we can source files
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
@@ -29,4 +29,4 @@ RUN npm config set prefix '/usr/local/.npm-global'
 RUN export PATH=/usr/local/.npm-global/bin:$PATH
 
 RUN npm install -g grunt-cli
-# USER jenkins
+USER jenkins

@@ -4,6 +4,7 @@
 /* jshint node: true */
 
 var logger = require('../../../utils/logger');
+var imageUtils = require('../../../utils/image.utils');
 var _ = require('underscore');
 var Foto = require('./foto.model');
 var im = require('imagemagick');
@@ -74,8 +75,8 @@ exports.findByInformeIdAndTags = function(req, res) {
             function(fotos) {
                 var fotoList = _.map(fotos, function(foto) {
                     var fotoUrl = req.query.full ?
-                        getFullUrlFromFoto(foto) :
-                        getBase64UrlFromFoto(foto);
+                        imageUtils.getFullUrlFromFoto(foto) :
+                        imageUtils.getBase64UrlFromFoto(foto);
                         return {
                             id: foto._id,
                             idInforme: foto.idInforme,
@@ -97,15 +98,6 @@ exports.findByInformeIdAndTags = function(req, res) {
     logger.info('Leaving FotoController#findByInformeIdAndTags');
 };
 
-function getFullUrlFromFoto(foto) {
-    return imageFolder + thumbFolder + foto.filename + '.' + foto.ext;
-}
-
-function getBase64UrlFromFoto(foto) {
-    var base64Data = fs.readFileSync(publicFolder + imageFolder + foto.filename + '.' + foto.ext, 'base64');
-    return 'data:image/' + foto.ext + ';base64,' + base64Data;
-}
-
 exports.deleteById = function(req, res) {
     logger.info('Entering FotoController#deleteById(req.params.id={%s}', req.params.id);
 
@@ -116,13 +108,12 @@ exports.deleteById = function(req, res) {
     }
 
     Foto
-        .findByIdAndRemove(id)
+        .findByIdAndRemove(req.params.id)
         .select('filename ext')
         .exec()
         .then(
             function(foto) {
-                fs.unlinkSync(publicFolder + imageFolder + foto.filename + '.' + foto.ext);
-                fs.unlinkSync(publicFolder + imageFolder + thumbFolder + foto.filename + '.' + foto.ext);
+                imageUtils.unlink(foto.filename, foto.ext);
                 logger.info('Foto deleted by id %s', foto.id);
                 return sendJsonResponse(res, 204, null);
             }
@@ -196,43 +187,6 @@ exports.update = function(req, res) {
         );
         
     logger.info('Leaving FotoController#update');
-};
-
-exports.deleteByInformeId = function(req, res) {
-    logger.info('Entering FotoController#deleteByInformeId(req.query.informeId={%s}', req.query.informeId);
- 
-    if (!req.query.informeId || !req.query.informeId) {
-        return sendJsonResponse(res, 404, {
-            'message': 'id not found in request params'
-        });
-    }
-
-    Foto
-        .find({
-            idInforme: req.query.informeId
-        })
-        .exec()
-        .then(
-            function(fotos) {
-                _.each(fotos, function(foto) {
-                    foto.remove(
-                        function(err) {
-                            if (err) {
-                                return sendJsonResponse(res, 400, err);
-                            }
-                        }
-                    );
-                });
-                return sendJsonResponse(res, 204, null);
-            }
-        )
-        .catch(
-            function(err) {
-                return sendJsonResponse(res, 400, err);
-            }
-        );
-    
-    logger.info('Leaving FotoController#deleteByInformeId');
 };
 
 exports.create = function(req, res) {

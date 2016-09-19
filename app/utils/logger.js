@@ -2,6 +2,8 @@
 
 'use strict';
 
+/* jshint node: true */
+
 var winston = require('winston');
 winston.emitErrs = true;
 

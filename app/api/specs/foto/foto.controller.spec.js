@@ -2,6 +2,8 @@
 
 'use strict';
 
+/* jshint node: true */
+
 var sinon = require('sinon');
 require('sinon-as-promised');
 require('sinon-mongoose');
@@ -10,11 +12,9 @@ var should = require('chai').should();
 describe('FotoController', function() {
 	var FotoController = require('../../src/foto/foto.controller.js');
 	var FotoModel = require('../../src/foto/foto.model.js');
+	var ImageUtils = require('../../../utils/image.utils');
 
-	it('should return foto by id', function(done) {
-		var mock = sinon.mock(FotoModel);
-
-		var foto = {
+	var foto = {
 			_id: '1',
             idInforme: '1',
             filename: 'mifoto',
@@ -22,7 +22,10 @@ describe('FotoController', function() {
             syncTime: '2008-09-09',
             descripcion: 'oo',
             tags: ''
-        };
+    };
+
+	it('should return foto by id', function(done) {
+		var mock = sinon.mock(FotoModel);
 
 		var statusCallback = function(status) {
 			status.should.equal(200);
@@ -152,212 +155,137 @@ describe('FotoController', function() {
 	
 		FotoController.getById(req, res);
 	});
-	/*
-	it('should return all A1 docs', function(done) {
-		var mock = sinon.mock(A1Model);
+	
+
+	it('should return all fotos by id and tags in base64 format', function(done) {
+		var mock = sinon.mock(FotoModel);
+		var imageUtilsMock = sinon.mock(ImageUtils);
 
 		var statusCallback = function(status) {
 			status.should.equal(200);
 		};
 
 		var jsonCallback = function(json) {
-			json.should.equal('success');
+			var expected = [ { id: '1', 
+				idInforme: '1',
+    			url: 'base64Url',
+    			syncTime: '2008-09-09',
+    			descripcion: 'oo',
+    			tags: '' 
+    		} ];
+
+			json.should.deep.equal(expected);
 			mock.restore();
 			done();		
 		};
 		
-		var req = {};
+		var req = {query: { informeId: '1', tags: ['xxx']}};
 		var res = { 
 			status: statusCallback,
 			json: jsonCallback
 		};
 
+		imageUtilsMock
+			.expects('getBase64UrlFromFoto')
+			.withArgs(foto)
+			.returns('base64Url');
+
 		mock
-			.expects('find')
-			.chain('select').withArgs('-sequence -__v')
-			.chain('exec')
-			.resolves('success');
+			.expects('findByInformeIdAndTags')
+			.withArgs('1', ['xxx'])
+			.resolves([foto]);
 		
-		A1Controller.findAll(req, res);
+		FotoController.findByInformeIdAndTags(req, res);
 	});
 
-	it('should return 400 if promise is rejected', function(done) {
-		var mock = sinon.mock(A1Model);
+	it('should return all fotos by id and tags in full format', function(done) {
+		var mock = sinon.mock(FotoModel);
+		var imageUtilsMock = sinon.mock(ImageUtils);
+
+		var statusCallback = function(status) {
+			status.should.equal(200);
+		};
+
+		var jsonCallback = function(json) {
+			var expected = [ { id: '1', 
+				idInforme: '1',
+    			url: 'fullUrl',
+    			syncTime: '2008-09-09',
+    			descripcion: 'oo',
+    			tags: '' 
+    		} ];
+
+			json.should.deep.equal(expected);
+			mock.restore();
+			done();		
+		};
+		
+		var req = {query: { informeId: '1', tags: ['xxx'], full: true}};
+		var res = { 
+			status: statusCallback,
+			json: jsonCallback
+		};
+
+		imageUtilsMock
+			.expects('getFullUrlFromFoto')
+			.withArgs(foto)
+			.returns('fullUrl');
+
+		mock
+			.expects('findByInformeIdAndTags')
+			.withArgs('1', ['xxx'])
+			.resolves([foto]);
+		
+		FotoController.findByInformeIdAndTags(req, res);
+	});
+
+	it('should return informeId not found in query params if informeId is empty in the request', function(done) {
+		var mock = sinon.mock(FotoModel);
+
+		var statusCallback = function(status) {
+			status.should.equal(404);
+			done();
+		};
+
+		var jsonCallback = function(json) {
+			json.message.should.equal('informeId not found in query params');
+		};
+		
+		var req = { query: {informeId: ''}};
+		var res = { 
+			status: statusCallback,
+			json: jsonCallback
+		};
+
+		FotoController.findByInformeIdAndTags(req, res);
+	});
+
+	it('should return 400 if promise is rejected while looking by informeId', function(done) {
+		var mock = sinon.mock(FotoModel);
 
 		var statusCallback = function(status) {
 			status.should.equal(400);
 		};
 
 		var jsonCallback = function(json) {
+			console.log(json);
 			json.message.should.equal('error');
 			mock.restore();
-			done();
+			done();		
 		};
 		
-		var req = {};
+		var req = {query: { informeId: '1', tags: ['xxx']}};
 		var res = { 
 			status: statusCallback,
 			json: jsonCallback
 		};
 
 		mock
-			.expects('find')
-			.chain('select').withArgs('-sequence -__v')
-			.chain('exec')
+			.expects('findByInformeIdAndTags')
+			.withArgs('1', ['xxx'])
 			.rejects('error');
-		
-		A1Controller.findAll(req, res);
-	});
-
-	it('should return numeroTramite not found in params if it is empty in the request', function(done) {
-				var mock = sinon.mock(A1Model);var statusCallback = function(status) {
-			status.should.equal(404);
-			done();
-		};
-
-		var jsonCallback = function(json) {
-			json.message.should.equal('numeroTramite not found in request params');
-		};
-		
-		var req = { params: {numeroTramite:''}};
-		var res = { 
-			status: statusCallback,
-			json: jsonCallback
-		};
-
-		A1Controller.getByNumeroTramite(req, res);
-	});
-
-	it('should return numeroTramite not found in params if numero tramite is not sent in the request', function(done) {
-		var mock = sinon.mock(A1Model);
-		
-		var statusCallback = function(status) {
-			status.should.equal(404);
-		};
-
-		var jsonCallback = function(json) {
-			json.message.should.equal('numeroTramite not found in request params');
-			done();
-		};
-		
-		var req = { params: {}};
-		var res = { 
-			status: statusCallback,
-			json: jsonCallback
-		};
-
-		A1Controller.getByNumeroTramite(req, res);
-	});
-
-	it('should return 404 if a1Doc not found by cit', function(done) {
-		var mock = sinon.mock(A1Model);
-
-		var statusCallback = function(status) {
-			status.should.equal(404);
-		};
-
-		var jsonCallback = function(json) {
-			json.message.should.equal('No results found while searching by cit 1');
-			mock.restore();
-			done();		
-		};
-		
-		var req = { query: {cit: '1'}};
-		var res = { 
-			status: statusCallback,
-			json: jsonCallback
-		};
-
-		mock
-			.expects('getByCit')
-			.withArgs('1')
-			.resolves(null);
 	
-		A1Controller.getByCit(req, res);
+		FotoController.findByInformeIdAndTags(req, res);
 	});
-
-	it('should return 404 if a1Doc not found by numeroTramite', function(done) {
-		var mock = sinon.mock(A1Model);
-
-		var statusCallback = function(status) {
-			status.should.equal(404);
-		};
-
-		var jsonCallback = function(json) {
-			json.message.should.equal('No results found while searching by numeroTramite 1');
-			mock.restore();
-			done();		
-		};
-		
-		var req = { params: {numeroTramite: '1'}};
-		var res = { 
-			status: statusCallback,
-			json: jsonCallback
-		};
-
-		mock
-			.expects('getByNumeroTramite')
-			.withArgs('1')
-			.resolves(null);
-	
-		A1Controller.getByNumeroTramite(req, res);
-	});
-
-	it('should return 200 if a1Doc is found by numeroTramite', function(done) {
-		var mock = sinon.mock(A1Model);
-
-		var a1 = {numeroTramite: '1'};
-
-		var statusCallback = function(status) {
-			status.should.equal(200);
-		};
-
-		var jsonCallback = function(json) {
-			json.should.equal(a1);
-			mock.restore();
-			done();		
-		};
-		
-		var req = { params: {numeroTramite: '1'}};
-		var res = { 
-			status: statusCallback,
-			json: jsonCallback
-		};
-
-		mock
-			.expects('getByNumeroTramite')
-			.withArgs('1')
-			.resolves(a1);
-	
-		A1Controller.getByNumeroTramite(req, res);
-	});
-
-	it('should return 200 if a1Doc is found by cit', function(done) {
-		var mock = sinon.mock(A1Model);
-		var a1 = {cit: '1'};
-
-		var statusCallback = function(status) {
-			status.should.equal(200);
-		};
-
-		var jsonCallback = function(json) {
-			json.should.equal(a1);
-			mock.restore();
-			done();		
-		};
-		
-		var req = { query: {cit: '1'}};
-		var res = { 
-			status: statusCallback,
-			json: jsonCallback
-		};
-
-		mock
-			.expects('getByCit')
-			.withArgs('1')
-			.resolves(a1);
-	
-		A1Controller.getByCit(req, res);
-	});*/
 });
 }());

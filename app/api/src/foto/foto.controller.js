@@ -1,9 +1,10 @@
 (function() {
 'use strict';
 
+/* jshint node: true */
+
+var logger = require('../../../utils/logger');
 var _ = require('underscore');
-var winston = require('winston');
-var sistacLoggerError = winston.loggers.get('sistac-error');
 var Foto = require('./foto.model');
 var im = require('imagemagick');
 var crypto = require('crypto');
@@ -17,11 +18,13 @@ var sendJsonResponse = function(res, status, content) {
     res.status(status);
     res.json(content);
     if (400 === status || 404 === status) {
-        sistacLoggerError.error(content);
+        logger.error(content);
     }
 };
 
 exports.getById = function(req, res) {
+    logger.info('Entering FotoController#getById(req.params.id={%s})', req.params.id);
+
     if (!req.params || !req.params.id) {
         return sendJsonResponse(res, 404, {
             'message': 'id not found in request params'
@@ -29,73 +32,69 @@ exports.getById = function(req, res) {
     }
 
     Foto
-        .findById(req.params.id)
-        .select('-sequence -__v')
-        .exec(function(err, foto) {
-            if (err) {
-                return sendJsonResponse(res, 400, err);
-            } else if (!foto) {
-                return sendJsonResponse(res, 404, {
-                    'message': 'Foto not found by id: ' + req.params.id
-                });
-            } else {
-                return sendJsonResponse(res, 200, {
-                    id: foto._id,
-                    idInforme: foto.idInforme,
-                    url: imageFolder + thumbFolder + foto.filename + '.' + foto.ext,
-                    syncTime: foto.syncTime,
-                    descripcion: foto.descripcion,
-                    tags: foto.tags
-                });
+        .getById(req.params.id)
+        .then(
+            function(foto) {
+                if (null === foto) {
+                    return sendJsonResponse(res, 404, {'message': 'No results found while searching by id ' + req.params.id});
+                } else {
+                    logger.info('Found foto with id %s while searching by id %s', foto.id, req.params.id);
+                    return sendJsonResponse(res, 200, {
+                        id: foto._id,
+                        idInforme: foto.idInforme,
+                        url: imageFolder + thumbFolder + foto.filename + '.' + foto.ext,
+                        syncTime: foto.syncTime,
+                        descripcion: foto.descripcion,
+                        tags: foto.tags
+                    });
+                }
             }
-        });
+        )
+        .catch(
+            function(err) {
+                return sendJsonResponse(res, 400, err);
+            }
+        );
+
+    logger.info('Leaving FotoController#getById');
 };
 
 exports.findByInformeIdAndTags = function(req, res) {
-    var filter = {};
+    logger.info('Entering FotoController#findByInformeIdAndTags(req.query.informeId={%s})', req.query.informeId);
 
-    if (!req.query.idInforme) {
+    if (!req.query.informeId) {
         return sendJsonResponse(res, 404, {
-            'message': 'idInforme not found in request params'
+            'message': 'informeId not found in query params'
         });
-    } else {
-        filter.idInforme = req.query.idInforme;
-    }
-
-    if (req.query.tag) {
-        var tags = [];
-        tags.push(req.query.tag);
-        var inQuery = {
-            $in: tags
-        };
-        filter.tags = inQuery;
     }
 
     Foto
-        .find(filter)
-        .select('-sequence -__v')
-        .exec(
-            function(err, fotos) {
-                if (err) {
-                    return sendJsonResponse(res, 400, err);
-                }
+        .findByInformeIdAndTags(req.query.informeId, req.query.tags)
+        .then(
+            function(fotos) {
                 var fotoList = _.map(fotos, function(foto) {
                     var fotoUrl = req.query.full ?
                         getFullUrlFromFoto(foto) :
                         getBase64UrlFromFoto(foto);
-
-                    return {
-                        id: foto._id,
-                        idInforme: foto.idInforme,
-                        url: fotoUrl,
-                        syncTime: foto.syncTime,
-                        descripcion: foto.descripcion,
-                        tags: foto.tags
-                    };
+                        return {
+                            id: foto._id,
+                            idInforme: foto.idInforme,
+                            url: fotoUrl,
+                            syncTime: foto.syncTime,
+                            descripcion: foto.descripcion,
+                            tags: foto.tags
+                        };
                 });
                 return sendJsonResponse(res, 200, fotoList);
             }
+        )
+        .catch(
+            function(err) {
+                return sendJsonResponse(res, 400, err);
+            }
         );
+
+    logger.info('Leaving FotoController#findByInformeIdAndTags');
 };
 
 function getFullUrlFromFoto(foto) {
@@ -107,53 +106,55 @@ function getBase64UrlFromFoto(foto) {
     return 'data:image/' + foto.ext + ';base64,' + base64Data;
 }
 
-exports.delete = function(req, res) {
-    var id = req.params.id;
-    if (!id) {
-        sendJsonResponse(res, 404, {
-            'message': 'Foto not found by id: ' + id
+exports.deleteById = function(req, res) {
+    logger.info('Entering FotoController#deleteById(req.params.id={%s}', req.params.id);
+
+    if (!req.params.id) {
+        return sendJsonResponse(res, 404, {
+            'message': 'id not found in request params'
         });
     }
 
     Foto
         .findByIdAndRemove(id)
         .select('filename ext')
-        .exec(
-            function(err, foto) {
-                if (err) {
-                    sendJsonResponse(res, 404, err);
-                    return;
-                }
+        .exec()
+        .then(
+            function(foto) {
                 fs.unlinkSync(publicFolder + imageFolder + foto.filename + '.' + foto.ext);
                 fs.unlinkSync(publicFolder + imageFolder + thumbFolder + foto.filename + '.' + foto.ext);
-                sendJsonResponse(res, 204, null);
+                logger.info('Foto deleted by id %s', foto.id);
+                return sendJsonResponse(res, 204, null);
+            }
+        )
+        .catch(
+            function(err) {
+                return sendJsonResponse(res, 400, err);
             }
         );
+
+    logger.info('Leaving FotoController#deleteById');
 };
 
 exports.update = function(req, res) {
+    logger.info('Entering FotoController#update(req.params.id={%s}', req.params.id);
+
     if (!req.params || !req.params.id) {
-        sendJsonResponse(res, 404, {
+        return sendJsonResponse(res, 404, {
             'message': 'id not found in request params'
         });
-        return;
     }
 
     Foto
         .findById(req.params.id)
         .select('-sequence -__v')
-        .exec(
-            function(err, foto) {
-                if (err) {
-                    sendJsonResponse(res, 400, err);
-                    return;
-                } else if (!foto) {
-                    sendJsonResponse(res, 404, {
-                        'message': 'Foto not found by id:' + req.params.id
-                    });
-                    return;
+        .exec()
+        .then(
+            function(foto) {
+                 if (null === foto) {
+                    return sendJsonResponse(res, 404, {'message': 'No results found while searching by id ' + req.params.id});
                 }
-
+               
                 var tags = req.body.tags;
                 var descripcion = req.body.descripcion;
 
@@ -165,85 +166,87 @@ exports.update = function(req, res) {
                         }
                     })
                     .select('_id')
-                    .exec(
-                        function(err, fotoWithDuplicateTag) {
-                            if (err) {
-                                sendJsonResponse(res, 400, err);
-                                return;
-                            }
-
+                    .exec()
+                    .then(
+                        function(fotoWithDuplicateTag) {
                             if (fotoWithDuplicateTag && !fotoWithDuplicateTag._id.equals(foto._id)) {
-                                sendJsonResponse(res, 400, {
+                                return sendJsonResponse(res, 400, {
                                     'message': 'Tags already assinged'
                                 });
-                                return;
                             }
 
                             foto.tags = tags;
                             foto.descripcion = descripcion;
                             foto
-                                .save(
-                                    function(err) {
-                                        if (err) {
-                                            sendJsonResponse(res, 400, err);
-                                            return;
-                                        }
-                                        sendJsonResponse(res, 200, foto);
+                                .save()
+                                .exec()
+                                .then(
+                                    function() {
+                                        return sendJsonResponse(res, 200, foto);
                                     }
                                 );
                         }
                     );
-            });
+            }
+        )
+        .catch(
+            function(err) {
+                return sendJsonResponse(res, 400, err);
+            }
+        );
+        
+    logger.info('Leaving FotoController#update');
 };
 
 exports.deleteByInformeId = function(req, res) {
-    if (!req.params || !req.params.id) {
-        /*sendJsonResponse(res, 404, {
+    logger.info('Entering FotoController#deleteByInformeId(req.query.informeId={%s}', req.query.informeId);
+ 
+    if (!req.query.informeId || !req.query.informeId) {
+        return sendJsonResponse(res, 404, {
             'message': 'id not found in request params'
-        });*/
-        sistacLoggerError.error('id not found in request params');
-        return;
+        });
     }
 
     Foto
         .find({
-            idInforme: req.params.id
+            idInforme: req.query.informeId
         })
-        .exec(
-            function(err, fotos) {
-                if (err) {
-                    sistacLoggerError.error(err);
-                    //sendJsonResponse(res, 400, err);
-                    return;
-                }
+        .exec()
+        .then(
+            function(fotos) {
                 _.each(fotos, function(foto) {
                     foto.remove(
                         function(err) {
                             if (err) {
-                                sistacLoggerError.error(err);
-                                //sendJsonResponse(res, 400, err);
-                                return;
+                                return sendJsonResponse(res, 400, err);
                             }
                         }
                     );
                 });
-                //sendJsonResponse(res, 204, null);
+                return sendJsonResponse(res, 204, null);
+            }
+        )
+        .catch(
+            function(err) {
+                return sendJsonResponse(res, 400, err);
             }
         );
+    
+    logger.info('Leaving FotoController#deleteByInformeId');
 };
 
 exports.create = function(req, res) {
+    logger.info('Entering FotoController#create');
+
     var imagen = null;
     var filename = null;
     var ext = null;
 
     if (!req.body.idInforme) {
-        sendJsonResponse(res, 400, {
-            'message': 'missing idInforme'
+        return sendJsonResponse(res, 404, {
+            'message': 'missing informeId'
         });
-        return;
     }
-
 
     if (req.body.imagen || req.body.imagen.src) {
         imagen = req.body.imagen.src ? req.body.imagen.src : req.body.imagen;
@@ -264,8 +267,7 @@ exports.create = function(req, res) {
             width: 200
         }, function(err, stdout, stderr) {
             if (err || stdout || stderr) {
-                sendJsonResponse(res, 500, err);
-                return;
+                return sendJsonResponse(res, 500, err);
             }
         });
     }
@@ -277,14 +279,20 @@ exports.create = function(req, res) {
         descripcion: req.body.descripcion,
         tags: req.body.tags,
         syncTime: req.body.syncTime
-    }, function(err, foto) {
-        if (err) {
-            sendJsonResponse(res, 400, err);
-            return;
-        } else {
-            sendJsonResponse(res, 201, foto);
-            return;
+    })
+    .exec()
+    .then(
+        function(foto) {
+            logger.info('Foto created with id %s', foto.id);
+            return sendJsonResponse(res, 201, foto);
         }
-    });
+    )
+    .catch(
+        function(err) {
+            return sendJsonResponse(res, 400, err);
+        }
+    );
+
+    logger.info('Leaving FotoController#create');
 };
 }());

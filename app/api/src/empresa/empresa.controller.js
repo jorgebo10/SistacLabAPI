@@ -17,7 +17,7 @@ var sendJsonResponse = function(res, status, content) {
 };
 
 exports.findAll = function(req, res) {
-    logger.debug('Entering EmpresaController#findAll');
+    logger.info('Entering EmpresaController#findAll');
 
     Empresa
         .find()
@@ -35,11 +35,11 @@ exports.findAll = function(req, res) {
             }
         );
 
-    logger.debug('Leaving EmpresaController#findAll');
+    logger.info('Leaving EmpresaController#findAll');
 };
 
 exports.getByCodigo = function(req, res) {
-    logger.debug('Entering EmpresaController#getByCodigo(req.params.codigo={%s})', req.params.codigo);
+    logger.info('Entering EmpresaController#getByCodigo(req.params.codigo={%s})', req.params.codigo);
 
     if (!req.params || !req.params.codigo) {
         return sendJsonResponse(res, 404, {
@@ -65,11 +65,11 @@ exports.getByCodigo = function(req, res) {
             }
         );
 
-    logger.debug('Leaving EmpresaController#getByCodigo');
+    logger.info('Leaving EmpresaController#getByCodigo');
 };
 
 exports.create = function(req, res) {
-    logger.debug('Entering EmpresaController#create(req.body={%s}', req.body);
+    logger.info('Entering EmpresaController#create(req.body={%s}', req.body);
     
     if (!req.body.codigo || !req.body.email) {
         return sendJsonResponse(res, 404, {
@@ -102,11 +102,11 @@ exports.create = function(req, res) {
         }
     );
 
-    logger.debug('Leaving EmpresaController#create');
+    logger.info('Leaving EmpresaController#create');
 };
 
 exports.update = function(req, res) {
-  logger.debug('Entering EmpresaController#update %j', req.body);
+  logger.info('Entering EmpresaController#update %j', req.body);
 
     if (!req.params || !req.params.codigo || !req.body.email) {
         return sendJsonResponse(res, 404, {
@@ -144,11 +144,12 @@ exports.update = function(req, res) {
             }
         );
 
-    logger.debug('Leaving EmpresaController#update');
+    logger.info('Leaving EmpresaController#update');
 };
 
 exports.deleteByCodigo = function(req, res) {
-    logger.debug('Entering EmpresaController#deleteByCodigo(req.params.codigo={%s}', req.params.codigo);
+    console.log('hola');
+    logger.info('Entering EmpresaController#deleteByCodigo(req.params.codigo={%s}', req.params.codigo);
 
 
     if (!req.params.codigo) {
@@ -174,11 +175,11 @@ exports.deleteByCodigo = function(req, res) {
             }
         );
 
-    logger.debug('Entering EmpresaController#deleteByCodigo');
+    logger.info('Entering EmpresaController#deleteByCodigo');
 };
 
 exports.resetToken = function(req, res, next) {
-    logger.debug('Entering EmpresaController#resetToken(req.params.codigo={%s}', req.params.codigo);
+    logger.info('Entering EmpresaController#resetToken(req.params.codigo={%s}', req.params.codigo);
 
     if (!req.body || !req.body.codigo || !req.body.password) {
         return sendJsonResponse(res, 404, {
@@ -225,6 +226,6 @@ exports.resetToken = function(req, res, next) {
             }
         );
 
-    logger.debug('Leaving EmpresaController#resetToken');
+    logger.info('Leaving EmpresaController#resetToken');
 };
 }());

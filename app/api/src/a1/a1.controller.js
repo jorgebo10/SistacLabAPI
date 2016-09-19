@@ -15,7 +15,7 @@ var sendJsonResponse = function(res, status, content) {
 };
 
 exports.getByCit = function(req, res) {
-    logger.debug('Entering A1Controller#getByCit(req.query.cit={%s})', req.query.cit);
+    logger.info('Entering A1Controller#getByCit(req.query.cit={%s})', req.query.cit);
 
     if (!req.query || !req.query.cit) {
         return sendJsonResponse(res, 404, {
@@ -47,18 +47,19 @@ exports.getByCit = function(req, res) {
             }
         );
 
-    logger.debug('Leaving A1Controller#getByCit');
+    logger.info('Leaving A1Controller#getByCit');
 };
 
 
 exports.getByNumeroTramite = function(req, res) {
-    logger.debug('Entering A1Controller#getByNumeroTramite(req.params.numeroTramite={%s})', req.params.numeroTramite);
+    logger.info('Entering A1Controller#getByNumeroTramite(req.params.numeroTramite={%s})', req.params.numeroTramite);
 
     if (!req.params || !req.params.numeroTramite) {
         return sendJsonResponse(res, 404, {
             'message': 'numeroTramite not found in request params'
         });
     }
+
     A1
         .getByNumeroTramite(req.params.numeroTramite)
         .then(
@@ -77,11 +78,12 @@ exports.getByNumeroTramite = function(req, res) {
             }
         );
 
-    logger.debug('Leaving A1Controller#getByNumeroTramite');
+    logger.info('Leaving A1Controller#getByNumeroTramite');
 };
 
 exports.findAll = function(req, res) {
-    logger.debug('Entering A1Controller#findAll');
+    logger.info('Entering A1Controller#findAll');
+
     A1
         .find()
         .select('-sequence -__v')
@@ -97,16 +99,19 @@ exports.findAll = function(req, res) {
                 return sendJsonResponse(res, 400, err);
             }
         );
-    logger.debug('Leaving A1Controller#findAll');
+
+    logger.info('Leaving A1Controller#findAll');
 };
 
 exports.create = function(req, res) {
-    logger.debug('Entering A1Controller#create(req.body={%s}', req.body);
+    logger.info('Entering A1Controller#create(req.body={%s}', req.body);
+
     if (!req.body.numeroTramite) {
         return sendJsonResponse(res, 404, {
             'message': 'numeroTramite not found'
         });
     }
+
     A1.create({
         numeroTramite: req.body.numeroTramite,
         cit: req.body.cit,
@@ -138,16 +143,19 @@ exports.create = function(req, res) {
             return sendJsonResponse(res, 400, err);
         }
     );
-    logger.debug('Leaving A1Controller#create');
+
+    logger.info('Leaving A1Controller#create');
 };
 
 exports.update = function(req, res) {
-    logger.debug('Entering A1Controller#update %j', req.body);
+    logger.info('Entering A1Controller#update %j', req.body);
+
     if (!req.params || !req.params.numeroTramite) {
         return sendJsonResponse(res, 404, {
             'message': 'numeroTramite not found in request params'
         });
     }
+
     A1
         .findOneAndUpdate({numeroTramite: req.params.numeroTramite}, { 
             cit: req.body.cit,
@@ -183,11 +191,13 @@ exports.update = function(req, res) {
                 return sendJsonResponse(res, 400, err);
             }
         );
-    logger.debug('Leaving A1Controller#update');
+
+    logger.info('Leaving A1Controller#update');
 };
 
 exports.deleteByNumeroTramite = function(req, res) {
-    logger.debug('Entering A1Controller#deleteByNumeroTramite(req.params.numeroTramite={%s}', req.params.numeroTramite);
+    logger.info('Entering A1Controller#deleteByNumeroTramite(req.params.numeroTramite={%s}', req.params.numeroTramite);
+
     var numeroTramite = req.params.numeroTramite;
     if (!numeroTramite) {
         return sendJsonResponse(res, 404, {
@@ -211,6 +221,7 @@ exports.deleteByNumeroTramite = function(req, res) {
                 return sendJsonResponse(res, 400, err);
             }
         );
-    logger.debug('Entering A1Controller#deleteByNumeroTramite');
+
+    logger.info('Entering A1Controller#deleteByNumeroTramite');
 };
 }());

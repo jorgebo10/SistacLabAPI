@@ -29,10 +29,39 @@ var FotoSchema = new Schema({
     syncTime: String
 });
 
+
+FotoSchema.static('getById', function(id) {
+    return this
+        .findById(id)
+        .select('-sequence -__v')
+        .exec();
+});
+
+FotoSchema.static('findByInformeIdAndTags', function(informeId, tags) {
+    var filter = {};
+
+    filter.idInforme = informeId;
+    if (tags) {
+        var queryTags = [];
+        queryTags.push(tags);
+        var inQuery = {
+            $in: queryTags
+        };
+        filter.tags = inQuery;
+    }
+
+    Foto
+        .find(filter)
+        .select('-sequence -__v')
+        .exec();
+});
+
+/*
 FotoSchema.plugin(autoIncrement.plugin, {
     model: 'Foto',
     field: 'sequence',
     startAt: 1
 });
+*/
 module.exports = mongoose.model('Foto', FotoSchema);
 }());

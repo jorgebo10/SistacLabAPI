@@ -7,7 +7,7 @@ require('sinon-as-promised');
 require('sinon-mongoose');
 var should = require('chai').should();
 
-describe('A1ModelController', function() {
+describe('A1Controller', function() {
 	var A1Controller = require('../../src/a1/a1.controller.js');
 	var A1Model = require('../../src/a1/a1.model.js');
 	

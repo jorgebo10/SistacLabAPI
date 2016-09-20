@@ -148,7 +148,6 @@ exports.update = function(req, res) {
 };
 
 exports.deleteByCodigo = function(req, res) {
-    console.log('hola');
     logger.info('Entering EmpresaController#deleteByCodigo(req.params.codigo={%s}', req.params.codigo);
 
 

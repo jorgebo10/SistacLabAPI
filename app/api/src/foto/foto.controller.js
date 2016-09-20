@@ -7,13 +7,6 @@ var logger = require('../../../utils/logger');
 var imageUtils = require('../../../utils/image.utils');
 var _ = require('underscore');
 var Foto = require('./foto.model');
-var im = require('imagemagick');
-var crypto = require('crypto');
-var fs = require('fs');
-
-var imageFolder = 'images/';
-var publicFolder = 'public/';
-var thumbFolder = 'thumb/';
 
 var sendJsonResponse = function(res, status, content) {
     res.status(status);
@@ -39,11 +32,11 @@ exports.getById = function(req, res) {
                 if (null === foto) {
                     return sendJsonResponse(res, 404, {'message': 'No results found while searching by id ' + req.params.id});
                 } else {
-                    logger.info('Found foto with id %s while searching by id %s', foto.id, req.params.id);
+                    logger.info('Found foto with id %s while searching by id %s', foto._id, req.params.id);
                     return sendJsonResponse(res, 200, {
                         id: foto._id,
-                        idInforme: foto.idInforme,
-                        url: imageFolder + thumbFolder + foto.filename + '.' + foto.ext,
+                        informeId: foto.informeId,
+                        url: imageUtils.getThumbFilename(foto.filename, foto.ext),
                         syncTime: foto.syncTime,
                         descripcion: foto.descripcion,
                         tags: foto.tags
@@ -192,42 +185,28 @@ exports.update = function(req, res) {
 exports.create = function(req, res) {
     logger.info('Entering FotoController#create');
 
-    var imagen = null;
-    var filename = null;
-    var ext = null;
-
-    if (!req.body.idInforme) {
+    if (!req.body.informeId) {
         return sendJsonResponse(res, 404, {
-            'message': 'missing informeId'
+            'message': 'informeId not found'
         });
     }
 
-    if (req.body.imagen || req.body.imagen.src) {
-        imagen = req.body.imagen.src ? req.body.imagen.src : req.body.imagen;
-    }
-
-    if (imagen) {
-        var matches = imagen.match(/^data:.+\/(.+);base64,(.*)$/);
-        ext = matches && matches.length == 3 ? matches[1] : 'png';
-        var data = matches && matches.length == 3 ? matches[2] : imagen;
-
-        filename = req.body.idInforme + '-' + crypto.randomBytes(4).readUInt32LE(0);
-
-        fs.writeFileSync(publicFolder + imageFolder + filename + '.' + ext, new Buffer(data, 'base64'));
-
-        im.resize({
-            srcPath: publicFolder + imageFolder + filename + '.' + ext,
-            dstPath: publicFolder + imageFolder + thumbFolder + filename + '.' + ext,
-            width: 200
-        }, function(err, stdout, stderr) {
-            if (err || stdout || stderr) {
-                return sendJsonResponse(res, 500, err);
-            }
+    if (!req.body.imagen && !req.body.imagen.src) {
+        return sendJsonResponse(res, 404, {
+            'message': 'image not found'
         });
     }
+
+    var imagen = req.body.imagen.src ? req.body.imagen.src : req.body.imagen;
+    var data = imageUtils.getDataFromBase64Image(imagen);
+    var ext = imageUtils.getExtFromBase64Image(imagen);
+    var filename = imageUtils.getFilename(req.body.informeId);
+
+    imageUtils.writeImageBase64(data, filename, ext);
+    imageUtils.resizeImage(filename, ext);
 
     Foto.create({
-        idInforme: req.body.idInforme,
+        informeId: req.body.informeId,
         filename: filename,
         ext: ext,
         descripcion: req.body.descripcion,

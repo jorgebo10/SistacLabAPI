@@ -24,7 +24,7 @@ var imageUtils = {
     	fs.unlinkSync(publicFolder + imageFolder + filename + '.' + ext);
         fs.unlinkSync(publicFolder + imageFolder + thumbFolder + filename + '.' + ext);
     },
-    writeBase64Image: function(data, filename, ext) {
+    writeImageBase64: function(data, filename, ext) {
         fs.writeFileSync(publicFolder + imageFolder + filename + '.' + ext, new Buffer(data, 'base64'));
     },
     resizeImage: function(filename, ext) {

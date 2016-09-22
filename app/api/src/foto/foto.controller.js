@@ -72,7 +72,7 @@ exports.findByInformeIdAndTags = function(req, res) {
                         imageUtils.getBase64UrlFromFoto(foto);
                         return {
                             id: foto._id,
-                            idInforme: foto.idInforme,
+                            informeId: foto.informeId,
                             url: fotoUrl,
                             syncTime: foto.syncTime,
                             descripcion: foto.descripcion,
@@ -191,13 +191,14 @@ exports.create = function(req, res) {
         });
     }
 
-    if (!req.body.imagen && !req.body.imagen.src) {
+    if (!req.body.imagen) {
         return sendJsonResponse(res, 404, {
             'message': 'image not found'
         });
     }
 
-    var imagen = req.body.imagen.src ? req.body.imagen.src : req.body.imagen;
+
+    var imagen = req.body.imagen;
     var data = imageUtils.getDataFromBase64Image(imagen);
     var ext = imageUtils.getExtFromBase64Image(imagen);
     var filename = imageUtils.getFilename(req.body.informeId);

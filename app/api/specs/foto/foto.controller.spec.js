@@ -65,7 +65,7 @@ describe('FotoController', function() {
 		
 		FotoController.getById(req, res);
 	});
-/*
+
 	it('should return id not found in params if id is empty in the request', function(done) {
 		var mock = sinon.mock(FotoModel);
 
@@ -173,15 +173,15 @@ describe('FotoController', function() {
 
 		var jsonCallback = function(json) {
 			var expected = [ { id: '1', 
-				idInforme: '1',
+				informeId: '1',
     			url: 'base64Url',
     			syncTime: '2008-09-09',
     			descripcion: 'oo',
     			tags: '' 
     		} ];
-
 			json.should.deep.equal(expected);
 			mock.restore();
+			imageUtilsMock.restore();
 			done();		
 		};
 		
@@ -204,6 +204,7 @@ describe('FotoController', function() {
 		FotoController.findByInformeIdAndTags(req, res);
 	});
 
+
 	it('should return all fotos by id and tags in full format', function(done) {
 		var mock = sinon.mock(FotoModel);
 		var imageUtilsMock = sinon.mock(ImageUtils);
@@ -214,7 +215,7 @@ describe('FotoController', function() {
 
 		var jsonCallback = function(json) {
 			var expected = [ { id: '1', 
-				idInforme: '1',
+				informeId: '1',
     			url: 'fullUrl',
     			syncTime: '2008-09-09',
     			descripcion: 'oo',
@@ -223,6 +224,7 @@ describe('FotoController', function() {
 
 			json.should.deep.equal(expected);
 			mock.restore();
+			imageUtilsMock.restore();
 			done();		
 		};
 		
@@ -292,6 +294,6 @@ describe('FotoController', function() {
 			.rejects('error');
 	
 		FotoController.findByInformeIdAndTags(req, res);
-	});*/
+	});
 });
 }());

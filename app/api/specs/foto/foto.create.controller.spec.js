@@ -12,6 +12,7 @@ describe('FotoController', function() {
 	var FotoModel = require('../../src/foto/foto.model.js');
 	var ImageUtils = require('../../../utils/image.utils');
 
+	
 	it('should return 404 if informeId is not sent while creating', function(done) {
 		var mock = sinon.mock(FotoModel);
 
@@ -47,7 +48,7 @@ describe('FotoController', function() {
 			done();		
 		};
 		
-		var req = { body: { informeId: 1}};
+		var req = { body: {informeId: 1}};
 		var res = { 
 			status: statusCallback,
 			json: jsonCallback
@@ -56,24 +57,26 @@ describe('FotoController', function() {
 		FotoController.create(req, res);
 	});
 
-	it('should return 201 while creating', function(done) {
+it('should return 400 if promise is rejected', function(done) {
 		var mock = sinon.mock(FotoModel);
 		var imageUtilsMock = sinon.mock(ImageUtils);
-		var foto = {informeId: '1'};
+		var imagen = 'data:dfdfdfdfdf;base64,fdfdfdfdfdfdf';
 
 		var statusCallback = function(status) {
-			status.should.equal(201);
+			status.should.equal(400);
 		};
 
 		var jsonCallback = function(json) {
-			json.should.equal(foto);
+			json.message.should.equal('error');
 			mock.restore();
+			imageUtilsMock.restore();
 			done();		
 		};
 		
 		var req = { 
 			body: { 
-				informeId: '1'
+				informeId: 1,
+				imagen: imagen
 			}
 		};
 
@@ -82,7 +85,6 @@ describe('FotoController', function() {
 			json: jsonCallback
 		};
 
-		var imagen = 'data:dfdfdfdfdf;base64,fdfdfdfdfdfdf';
 		imageUtilsMock
 			.expects('getDataFromBase64Image')
 			.withArgs(imagen)
@@ -99,7 +101,7 @@ describe('FotoController', function() {
 			.returns('1hhh');
 
 		imageUtilsMock
-			.expects('writeBase64Image')
+			.expects('writeImageBase64')
 			.withArgs('dfdfdfdfdf', '1hhh', 'png')
 			.returns('');
 
@@ -111,8 +113,90 @@ describe('FotoController', function() {
 		mock
 			.expects('create')
 			.withArgs({
-				informeId: '1',
+				informeId: 1,
+				descripcion: undefined,
+  				ext: "png",
+  				filename: "1hhh",
+  				syncTime: undefined,
+  				tags: undefined
+			})
+			.chain('exec')
+			.rejects('error');
+
+		FotoController.create(req, res);
+	});
+
+	it('should return 201 while creating', function(done) {
+		var mock = sinon.mock(FotoModel);
+		var imageUtilsMock = sinon.mock(ImageUtils);
+		var foto = {
+			descripcion: undefined,
+		 	ext: "png",
+  		 	filename: "1hhh",
+  	     	informeId: 1,
+         	syncTime: undefined,
+         	tags: undefined
+		};
+
+		var statusCallback = function(status) {
+			status.should.equal(201);
+		};
+
+		var jsonCallback = function(json) {
+			json.should.deep.equal(foto);
+			mock.restore();
+			imageUtilsMock.restore();
+			done();		
+		};
+
+		var imagen = 'data:dfdfdfdfdf;base64,fdfdfdfdfdfdf';
+		
+		var req = { 
+			body: { 
+				informeId: 1,
 				imagen: imagen
+			}
+		};
+
+		var res = { 
+			status: statusCallback,
+			json: jsonCallback
+		};
+
+		imageUtilsMock
+			.expects('getDataFromBase64Image')
+			.withArgs(imagen)
+			.returns('dfdfdfdfdf');
+
+		imageUtilsMock
+			.expects('getExtFromBase64Image')
+			.withArgs(imagen)
+			.returns('png');
+
+		imageUtilsMock
+			.expects('getFilename')
+			.withArgs(1)
+			.returns('1hhh');
+
+		imageUtilsMock
+			.expects('writeImageBase64')
+			.withArgs('dfdfdfdfdf', '1hhh', 'png')
+			.returns('');
+
+		imageUtilsMock
+			.expects('resizeImage')
+			.withArgs('1hhh', 'png')
+			.returns('');
+
+		mock
+			.expects('create')
+			.withArgs({
+				informeId: 1,
+				descripcion: undefined,
+  				ext: "png",
+  				filename: "1hhh",
+  				syncTime: undefined,
+  				tags: undefined
 			})
 			.chain('exec')
 			.resolves(foto);

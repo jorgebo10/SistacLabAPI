@@ -129,6 +129,12 @@ exports.update = function(req, res) {
         });
     }
 
+    if (!req.body.informeId) {
+        return sendJsonResponse(res, 404, {
+            'message': 'informeId not found in body'
+        });
+    }
+
     Foto
         .findById(req.params.id)
         .select('-sequence -__v')
@@ -153,7 +159,7 @@ exports.update = function(req, res) {
                     .exec()
                     .then(
                         function(fotoWithDuplicateTag) {
-                            if (fotoWithDuplicateTag && !fotoWithDuplicateTag._id.equals(foto._id)) {
+                            if (fotoWithDuplicateTag && fotoWithDuplicateTag._id !== foto._id) {
                                 return sendJsonResponse(res, 400, {
                                     'message': 'Tags already assinged'
                                 });
@@ -168,7 +174,17 @@ exports.update = function(req, res) {
                                     function() {
                                         return sendJsonResponse(res, 200, foto);
                                     }
+                                )
+                                .catch(
+                                   function(err) {
+                                        return sendJsonResponse(res, 400, err);
+                                    }
                                 );
+                        }
+                    )
+                    .catch(
+                        function(err) {
+                            return sendJsonResponse(res, 400, err);
                         }
                     );
             }

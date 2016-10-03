@@ -9,8 +9,8 @@ module.exports = function(grunt) {
 			options: {
 				mode: 'zip',
 				archive: function () {
-					var environment = process.env.GIT_TAG || 'Dev';
-		    		return 'dist/sistacLabApi' + environment + '.zip'
+					var environment = process.env.BUILD_TAG || 'Dev';
+		    		return 'dist/sistacLabApi-' + environment + '.zip'
       			}
       		},
 			files: [{

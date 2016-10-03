@@ -28,7 +28,7 @@ module.exports = function(grunt) {
 					reporter: 'spec',
 					coverage: true,
 					mask: '**/*.spec.js',
-					reportFormats: ['cobertura']
+					reportFormats: ['cobertura','html']
 				}
 			}
 		},

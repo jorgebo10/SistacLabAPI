@@ -178,11 +178,11 @@ exports.deleteByCodigo = function(req, res) {
 };
 
 exports.resetToken = function(req, res, next) {
-    logger.info('Entering EmpresaController#resetToken(req.params.codigo={%s}', req.params.codigo);
+    logger.info('Entering EmpresaController#resetToken(req.body.codigo={%s}', req.body.codigo);
 
     if (!req.body || !req.body.codigo || !req.body.password) {
         return sendJsonResponse(res, 404, {
-            'message': 'Codigo and password not found in request body'
+            'message': 'Codigo and/or password not found in request body'
         });
     }
 
@@ -199,9 +199,9 @@ exports.resetToken = function(req, res, next) {
                     });
                 }
 
+
                 if (empresa.password !== password) {
-                    res.setHeader('WWW-Authenticate', 'codigo:password incorrect');
-                    return sendJsonResponse(res, 401, {
+                    sendJsonResponse(res, 401, {
                         'message': 'Authetication failure'
                     });
                 } else {
@@ -221,6 +221,7 @@ exports.resetToken = function(req, res, next) {
         )
         .catch(
             function(err) {
+                console.log(err);
                 return sendJsonResponse(res, 400, err);
             }
         );

@@ -10,7 +10,7 @@ module.exports = function(grunt) {
 				mode: 'zip',
 				archive: function () {
 					var environment = process.env.BUILD_TAG || 'Dev';
-		    		return 'dist/sistacLabApi-' + environment + '.zip'
+		    		return 'dist/sistacLabApi-' + environment + '.zip';
       			}
       		},
 			files: [{

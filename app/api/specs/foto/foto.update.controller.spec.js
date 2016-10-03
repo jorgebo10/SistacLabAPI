@@ -35,8 +35,29 @@ describe('FotoController', function() {
 		FotoController.update(req, res);
 	});
 
+it('should return 404 if foto informeId is not sent', function(done) {
+		var mock = sinon.mock(FotoModel);
 
-	it('should return 400 if promise is rejected', function(done) {
+		var statusCallback = function(status) {
+			status.should.equal(404);
+		};
+
+		var jsonCallback = function(json) {
+			json.message.should.equal('informeId not found');
+			mock.restore();
+			done();		
+		};
+		
+		var req = { params: {id: 1}, body: {}};
+		var res = { 
+			status: statusCallback,
+			json: jsonCallback
+		};
+
+		FotoController.update(req, res);
+	});
+
+	it('should return 400 if promise is rejected while searching for informeId and tags', function(done) {
 		var mock = sinon.mock(FotoModel);
 
 		var statusCallback = function(status) {
@@ -60,16 +81,50 @@ describe('FotoController', function() {
 		};
 
 		mock
-			.expects('findById')
-			.withArgs(1)
-			.chain('select').withArgs('-sequence -__v')
+			.expects('findOne')
+			.withArgs({informeId: 1, tags: {$in: undefined}})
+			.chain('select').withArgs('_id')
 			.chain('exec')
 			.rejects('error');
 
 		FotoController.update(req, res);
 	});
 
-	it('should return 400 if foto to update is not found', function(done) {
+
+	it('should return 400 if promise is rejected because another foto exist with the same tag', function(done) {
+		var mock = sinon.mock(FotoModel);
+
+		var statusCallback = function(status) {
+			status.should.equal(400);
+		};
+
+		var jsonCallback = function(json) {
+			json.message.should.equal('Tags already assinged');
+			mock.restore();
+			done();		
+		};
+		
+		var req = { 
+			params: {id: 1},
+			body: {informeId: 1}
+		};
+
+		var res = { 
+			status: statusCallback,
+			json: jsonCallback
+		};
+
+		mock
+			.expects('findOne')
+			.withArgs({informeId: 1, tags: {$in: undefined}})
+			.chain('select').withArgs('_id')
+			.chain('exec')
+			.resolves({_id: 2});
+
+		FotoController.update(req, res);
+	});
+
+	it('should return 404 if foto is not found while updating', function(done) {
 		var mock = sinon.mock(FotoModel);
 
 		var statusCallback = function(status) {
@@ -93,24 +148,36 @@ describe('FotoController', function() {
 		};
 
 		mock
-			.expects('findById')
-			.chain('select').withArgs('-sequence -__v')
+			.expects('findOne')
+			.withArgs({informeId: 1, tags: {$in: undefined}})
+			.chain('select').withArgs('_id')
 			.chain('exec')
+			.resolves({_id: 1});
+
+		mock
+			.expects('findOneAndUpdate')
+			.withArgs(
+				{id: 1}, 
+				{ 
+                	tags: undefined,
+                    descripcion: undefined
+                }
+            )
+            .chain('exec')
 			.resolves(null);
 
 		FotoController.update(req, res);
 	});
 
-	it('should return 400 if foto to update found but error thrown', function(done) {
+	it('should return 200', function(done) {
 		var mock = sinon.mock(FotoModel);
-		var foto = {};
 
 		var statusCallback = function(status) {
-			status.should.equal(400);
+			status.should.equal(200);
 		};
 
 		var jsonCallback = function(json) {
-			json.message.should.equal('error');
+			json.should.equal(1);
 			mock.restore();
 			done();		
 		};
@@ -126,59 +193,23 @@ describe('FotoController', function() {
 		};
 
 		mock
-			.expects('findById')
-			.chain('select').withArgs('-sequence -__v')
-			.chain('exec')
-			.resolves(foto);
-
-		mock
 			.expects('findOne')
 			.withArgs({informeId: 1, tags: {$in: undefined}})
 			.chain('select').withArgs('_id')
 			.chain('exec')
-			.rejects('error');
-
-		FotoController.update(req, res);
-	});
-
-	it('should return 400 if foto tag is already duplicated', function(done) {
-		var mock = sinon.mock(FotoModel);
-		var foto = {_id: 1};
-
-		var statusCallback = function(status) {
-			status.should.equal(400);
-			console.log(status);
-		};
-
-		var jsonCallback = function(json) {
-			console.log(json);
-			json.message.should.equal('Tags already assinged');
-			mock.restore();
-			done();		
-		};
-		
-		var req = { 
-			params: {id: 1},
-			body: {informeId: 1}
-		};
-
-		var res = { 
-			status: statusCallback,
-			json: jsonCallback
-		};
+			.resolves({_id: 1});
 
 		mock
-			.expects('findById')
-			.chain('select').withArgs('-sequence -__v')
-			.chain('exec')
-			.resolves(foto);
-
-		mock
-			.expects('findOne')
-			.withArgs({informeId: 1, tags: {$in: undefined}})
-			.chain('select').withArgs('_id')
-			.chain('exec')
-			.resolves({_id: 2});
+			.expects('findOneAndUpdate')
+			.withArgs(
+				{id: 1}, 
+				{ 
+                	tags: undefined,
+                    descripcion: undefined
+                }
+            )
+            .chain('exec')
+			.resolves({_id: 1});
 
 		FotoController.update(req, res);
 	});

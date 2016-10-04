@@ -363,5 +363,47 @@ it('should return 400 if error while getting empresa', function(done) {
 
 		EmpresaController.resetToken(req, res);
 	});
+
+	it('should return 200 if reset is ok', function(done) {
+		var mock = sinon.mock(EmpresaModel);
+		var empresa = {codigo: '1', password: '1234', _id: 1};
+		var AuthUtils = require('../../../utils/auth.utils');
+		var authUtilsMock = sinon.mock(AuthUtils);
+
+		var statusCallback = function(status) {
+			status.should.equal(200);
+		};
+
+		var jsonCallback = function(json) {
+			json.should.deep.equal({ email: undefined, codigo: '1', token: 'ajdjfkdflk' });
+			mock.restore();
+			authUtilsMock.restore();
+			done();		
+		};
+		
+		var req = { 
+			body: { 
+				codigo: empresa.codigo,
+				password: '1234'
+			}
+		};
+
+		var res = { 
+			status: statusCallback,
+			json: jsonCallback
+		};
+
+		authUtilsMock
+			.expects('sign')
+			.withArgs(empresa._id)
+			.returns('ajdjfkdflk');
+
+		mock
+			.expects('getByCodigo')
+			.withArgs('1')
+			.resolves(empresa);
+
+		EmpresaController.resetToken(req, res);
+	});
 });
 }());

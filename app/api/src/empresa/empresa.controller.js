@@ -5,8 +5,7 @@
 
 var Empresa = require('./empresa.model');
 var logger = require('../../../utils/logger');
-var config = require('../../../../config/environment');
-var jwt = require('jsonwebtoken');
+var authUtils = require('../../../utils/auth.utils');
 
 var sendJsonResponse = function(res, status, content) {
     res.status(status);
@@ -199,22 +198,15 @@ exports.resetToken = function(req, res, next) {
                     });
                 }
 
-
                 if (empresa.password !== password) {
                     sendJsonResponse(res, 401, {
                         'message': 'Authetication failure'
                     });
                 } else {
-                    var token = jwt.sign({
-                        _id: empresa._id
-                    }, config.secrets.mobileAuthToken, {
-                        expiresInMinutes: config.secrets.mobileAuthTokenExpiresInMinutes
-                        }
-                    );
-                    return res.json({
+                    sendJsonResponse(res, 200, {
                         email: empresa.email,
                         codigo: empresa.codigo,
-                        token: token
+                        token: authUtils.sign(empresa._id)
                     });
                 }
             }

@@ -11,9 +11,23 @@ stage('Commit') {
             keepAll: false, 
             reportDir: 'coverage/lcov-report', 
             reportFiles: 'index.html', 
-            reportName: 'HTML Report']) 
-	archiveArtifacts artifacts: 'dist/sistacLabAPI-${env.BUILD_TAG}.zip', excludes: null
+            reportName: 'HTML Report'])
 
+
+    	def server = Artifactory.server SERVER_ID
+
+    	// Create the upload spec.
+    	def uploadSpec = """{
+        	"files": [
+                	{
+                    	"pattern": "dist/sistacLabAPI-${env.BUILD_TAG}.zip",
+                    	"target": "libs-snapshot-local"
+                	}
+            ]
+        }"""
+
+    	// Upload to Artifactory.
+    	def buildInfo1 = server.upload spec: uploadSpec
     }
 }
 

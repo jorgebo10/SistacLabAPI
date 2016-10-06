@@ -33,7 +33,7 @@ module.exports = function(grunt) {
 					reporter: 'spec',
 					coverage: true,
 					mask: '**/*.spec.js',
-					reportFormats: ['cobertura','html']
+					reportFormats: ['cobertura','lcov']
 				}
 			}
 		},

@@ -9,7 +9,7 @@ stage('Commit') {
         publishHTML([allowMissing: false, 
             alwaysLinkToLastBuild: false, 
             keepAll: false, 
-            reportDir: 'coverage', 
+            reportDir: 'coverage/lcov-report', 
             reportFiles: 'index.html', 
             reportName: 'HTML Report'])
         archive(include: './sistacLabApi-$BUILD_TAG.zip')
@@ -18,7 +18,7 @@ stage('Commit') {
 
 stage('Acceptance test') {
     node {
-          def nodeHome = tool 'node6.7.0'
+          def nodeHome = tool 'node5.12.0'
           env.PATH="${env.PATH}:${nodeHome}/bin"
           sh 'grunt unittest'
           input message: "Does it look good?"

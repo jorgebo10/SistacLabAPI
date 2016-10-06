@@ -1,7 +1,7 @@
 stage('Commit') {
     node {
         git url: 'https://github.com/jorgebo10/SistacLabAPI.git', branch:'development'
-        def nodeHome = tool 'node5.1.0'
+        def nodeHome = tool 'node5.12.0'
         env.PATH="${env.PATH}:${nodeHome}/bin"
         sh 'grunt unittest'
         sh 'grunt compress'

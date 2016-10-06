@@ -12,7 +12,7 @@ stage('Commit') {
             reportDir: 'coverage/lcov-report', 
             reportFiles: 'index.html', 
             reportName: 'HTML Report'])
-        archive(include: './sistacLabApi-$BUILD_TAG.zip')
+        archive(include: './dist/sistacLabApi-$BUILD_TAG.zip')
     }
 }
 

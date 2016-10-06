@@ -1,16 +1,21 @@
-//Test
 module.exports = function(grunt) {
 
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
 
-	copy: {
+	compress: {
 		main:{
+			options: {
+				mode: 'zip',
+				archive: function () {
+					var environment = process.env.BUILD_TAG || 'Dev';
+		    		return 'dist/sistacLabApi-' + environment + '.zip';
+      			}
+      		},
 			files: [{
 				expand: true,
 				filter: 'isFile',
-				src: ['app/**', 'config/**', 'coverage/**', 'app.js', 'package.json'],
-				dest: 'dist/'
+				src: ['app/**', 'config/**', 'app.js', 'package.json']
 			}]
 		}
 	},
@@ -57,9 +62,9 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-mocha-istanbul');
-	grunt.loadNpmTasks('grunt-contrib-copy');
-	
+	grunt.loadNpmTasks('grunt-contrib-compress');
+
 	grunt.registerTask('default', ['jshint', 'mocha_istanbul:coverage', 'concurrent']);
-	grunt.registerTask('build', ['jshint', 'mocha_istanbul:coverage', 'copy']);
+	grunt.registerTask('dist', ['jshint', 'mocha_istanbul:coverage', 'compress']);
 	grunt.registerTask('unittest', ['jshint', 'mocha_istanbul:coverage']);
 };

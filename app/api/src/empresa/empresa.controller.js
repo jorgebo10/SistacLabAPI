@@ -5,8 +5,7 @@
 
 var Empresa = require('./empresa.model');
 var logger = require('../../../utils/logger');
-var config = require('../../../../config/environment');
-var jwt = require('jsonwebtoken');
+var authUtils = require('../../../utils/auth.utils');
 
 var sendJsonResponse = function(res, status, content) {
     res.status(status);
@@ -178,11 +177,11 @@ exports.deleteByCodigo = function(req, res) {
 };
 
 exports.resetToken = function(req, res, next) {
-    logger.info('Entering EmpresaController#resetToken(req.params.codigo={%s}', req.params.codigo);
+    logger.info('Entering EmpresaController#resetToken(req.body.codigo={%s}', req.body.codigo);
 
     if (!req.body || !req.body.codigo || !req.body.password) {
         return sendJsonResponse(res, 404, {
-            'message': 'Codigo and password not found in request body'
+            'message': 'Codigo and/or password not found in request body'
         });
     }
 
@@ -200,27 +199,21 @@ exports.resetToken = function(req, res, next) {
                 }
 
                 if (empresa.password !== password) {
-                    res.setHeader('WWW-Authenticate', 'codigo:password incorrect');
-                    return sendJsonResponse(res, 401, {
+                    sendJsonResponse(res, 401, {
                         'message': 'Authetication failure'
                     });
                 } else {
-                    var token = jwt.sign({
-                        _id: empresa._id
-                    }, config.secrets.mobileAuthToken, {
-                        expiresInMinutes: config.secrets.mobileAuthTokenExpiresInMinutes
-                        }
-                    );
-                    return res.json({
+                    sendJsonResponse(res, 200, {
                         email: empresa.email,
                         codigo: empresa.codigo,
-                        token: token
+                        token: authUtils.sign(empresa._id)
                     });
                 }
             }
         )
         .catch(
             function(err) {
+                console.log(err);
                 return sendJsonResponse(res, 400, err);
             }
         );

@@ -131,63 +131,44 @@ exports.update = function(req, res) {
 
     if (!req.body.informeId) {
         return sendJsonResponse(res, 404, {
-            'message': 'informeId not found in body'
+            'message': 'informeId not found'
         });
     }
 
     Foto
-        .findById(req.params.id)
-        .select('-sequence -__v')
+        .findOne({
+            informeId: req.body.informeId,
+            tags: {
+                $in: req.body.tags
+            }
+        })
+        .select('_id')
         .exec()
         .then(
-            function(foto) {
-                 if (null === foto) {
-                    return sendJsonResponse(res, 404, {'message': 'No results found while searching by id ' + req.params.id});
+            function(fotoWithDuplicateTag) {
+                if (fotoWithDuplicateTag && fotoWithDuplicateTag._id !== req.params.id) {
+                    return sendJsonResponse(res, 400, {
+                        'message': 'Tags already assinged'
+                    });
                 }
-               
-                var tags = req.body.tags;
-                var descripcion = req.body.descripcion;
 
-                Foto
-                    .findOne({
-                        informeId: req.body.informeId,
-                        tags: {
-                            $in: tags
-                        }
-                    })
-                    .select('_id')
+                return Foto
+                    .findOneAndUpdate({id: req.params.id}, { 
+                        tags: req.body.tags,
+                        descripcion: req.body.descripcion
+                    }, {runValidators: true})
                     .exec()
                     .then(
-                        function(fotoWithDuplicateTag) {
-                            if (fotoWithDuplicateTag && fotoWithDuplicateTag._id !== foto._id) {
-                                return sendJsonResponse(res, 400, {
-                                    'message': 'Tags already assinged'
-                                });
+                        function(foto) {
+                            if (null === foto) {
+                                return sendJsonResponse(res, 404, {'message': 'No results found while searching by id ' + req.params.id});
+                            } else {
+                                logger.info('Foto updated by id %s', foto._id);
+                                return sendJsonResponse(res, 200, foto._id);
                             }
-
-                            foto.tags = tags;
-                            foto.descripcion = descripcion;
-                            foto
-                                .save()
-                                .exec()
-                                .then(
-                                    function() {
-                                        return sendJsonResponse(res, 200, foto);
-                                    }
-                                )
-                                .catch(
-                                   function(err) {
-                                        return sendJsonResponse(res, 400, err);
-                                    }
-                                );
-                        }
-                    )
-                    .catch(
-                        function(err) {
-                            return sendJsonResponse(res, 400, err);
                         }
                     );
-            }
+                }
         )
         .catch(
             function(err) {
@@ -195,7 +176,7 @@ exports.update = function(req, res) {
             }
         );
         
-    logger.info('Leaving FotoController#update');
+        logger.info('Leaving FotoController#update');
 };
 
 exports.create = function(req, res) {

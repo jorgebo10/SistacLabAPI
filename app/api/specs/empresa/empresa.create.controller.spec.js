@@ -169,6 +169,7 @@ it('should return 201 while creating with image', function(done) {
 
 		EmpresaController.create(req, res);
 	});
+
 	it('should return 400 if error while creating', function(done) {
 		var mock = sinon.mock(EmpresaModel);
 		var empresa = {codigo: '1', email: 'pepe@gmail.com'};

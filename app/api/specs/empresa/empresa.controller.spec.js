@@ -218,5 +218,192 @@ describe('EmpresaController', function() {
 	
 		EmpresaController.getByCodigo(req, res);
 	});
+
+	it('should return 404 if codigo not sent', function(done) {
+
+		var statusCallback = function(status) {
+			status.should.equal(404);
+		};
+
+		var jsonCallback = function(json) {
+			json.message.should.equal('Codigo and/or password not found in request body');
+			done();		
+		};
+		
+		var req = { body: {codigo: ''}};
+		var res = { 
+			status: statusCallback,
+			json: jsonCallback
+		};
+
+		EmpresaController.resetToken(req, res);
+	});
+
+	it('should return 404 if password not sent', function(done) {
+
+		var statusCallback = function(status) {
+			status.should.equal(404);
+		};
+
+		var jsonCallback = function(json) {
+			json.message.should.equal('Codigo and/or password not found in request body');
+			done();		
+		};
+		
+		var req = { body: {codigo: '122'}};
+		var res = { 
+			status: statusCallback,
+			json: jsonCallback
+		};
+
+		EmpresaController.resetToken(req, res);
+	});
+
+it('should return 400 if error while getting empresa', function(done) {
+		var mock = sinon.mock(EmpresaModel);
+		var empresa = {codigo: '1'};
+
+		var statusCallback = function(status) {
+			status.should.equal(400);
+		};
+
+		var jsonCallback = function(json) {
+			json.message.should.equal('error');
+			mock.restore();
+			done();		
+		};
+		
+		var req = { 
+			body: { 
+				codigo: empresa.codigo,
+				password: '1234'
+			}
+		};
+
+		var res = { 
+			status: statusCallback,
+			json: jsonCallback
+		};
+
+		mock
+			.expects('getByCodigo')
+			.withArgs(req.body.codigo)
+			.chain('exec')
+			.rejects('error');
+
+		EmpresaController.resetToken(req, res);
+	});
+
+	it('should return 404 if empresa is null', function(done) {
+		var mock = sinon.mock(EmpresaModel);
+		var empresa = {codigo: '1'};
+
+		var statusCallback = function(status) {
+			status.should.equal(404);
+		};
+
+		var jsonCallback = function(json) {
+			json.message.should.equal('Empresa not found by codigo: 1');
+			mock.restore();
+			done();		
+		};
+		
+		var req = { 
+			body: { 
+				codigo: empresa.codigo,
+				password: '1234'
+			}
+		};
+
+		var res = { 
+			status: statusCallback,
+			json: jsonCallback
+		};
+
+		mock
+			.expects('getByCodigo')
+			.withArgs(req.body.codigo)
+			.chain('exec')
+			.resolves(null);
+
+		EmpresaController.resetToken(req, res);
+	});
+
+
+	it('should return 401 if authentication error', function(done) {
+		var mock = sinon.mock(EmpresaModel);
+		var empresa = {codigo: '1', password: '1234'};
+
+		var statusCallback = function(status) {
+			status.should.equal(401);
+		};
+
+		var jsonCallback = function(json) {
+			json.message.should.equal('Authetication failure');
+			mock.restore();
+			done();		
+		};
+		
+		var req = { 
+			body: { 
+				codigo: empresa.codigo,
+				password: 'pp'
+			}
+		};
+
+		var res = { 
+			status: statusCallback,
+			json: jsonCallback
+		};
+
+		mock
+			.expects('getByCodigo')
+			.withArgs('1')
+			.resolves(empresa);
+
+		EmpresaController.resetToken(req, res);
+	});
+
+	it('should return 200 if reset is ok', function(done) {
+		var mock = sinon.mock(EmpresaModel);
+		var empresa = {codigo: '1', password: '1234', _id: 1};
+		var AuthUtils = require('../../../utils/auth.utils');
+		var authUtilsMock = sinon.mock(AuthUtils);
+
+		var statusCallback = function(status) {
+			status.should.equal(200);
+		};
+
+		var jsonCallback = function(json) {
+			json.should.deep.equal({ email: undefined, codigo: '1', token: 'ajdjfkdflk' });
+			mock.restore();
+			authUtilsMock.restore();
+			done();		
+		};
+		
+		var req = { 
+			body: { 
+				codigo: empresa.codigo,
+				password: '1234'
+			}
+		};
+
+		var res = { 
+			status: statusCallback,
+			json: jsonCallback
+		};
+
+		authUtilsMock
+			.expects('sign')
+			.withArgs(empresa._id)
+			.returns('ajdjfkdflk');
+
+		mock
+			.expects('getByCodigo')
+			.withArgs('1')
+			.resolves(empresa);
+
+		EmpresaController.resetToken(req, res);
+	});
 });
 }());

@@ -14,7 +14,7 @@ stage('Commit') {
             reportName: 'HTML Report'])
 
 
-    	def server = Artifactory.server ${env.SERVER_ID}
+    	def server = Artifactory.server "${env.SERVER_ID}"
 
     	// Create the upload spec.
     	def uploadSpec = """{

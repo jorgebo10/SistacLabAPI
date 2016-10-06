@@ -9,7 +9,6 @@ module.exports = function(grunt) {
 				mode: 'zip',
 				archive: function () {
 					var environment = process.env.BUILD_TAG || 'Dev';
-console.log(environment);		    		
 return 'dist/sistacLabApi-' + environment + '.zip';
       			}
       		},

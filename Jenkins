@@ -9,8 +9,8 @@ stage('Commit') {
         publishHTML([allowMissing: false, 
             alwaysLinkToLastBuild: false, 
             keepAll: false, 
-            reportDir: '', 
-            reportFiles: 'coverage/lcov-report/index.html', 
+            reportDir: 'coverage/lcov-report', 
+            reportFiles: 'index.html', 
             reportName: 'HTML Report'])
         archive(include: './sistacLabApi-$BUILD_TAG.zip')
     }

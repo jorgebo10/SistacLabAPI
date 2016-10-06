@@ -6,12 +6,12 @@ stage('Commit') {
         sh 'npm install'
         sh 'grunt unittest'
         sh 'grunt compress'
-/*        publishHTML([allowMissing: false, 
+        publishHTML([allowMissing: false, 
             alwaysLinkToLastBuild: false, 
             keepAll: false, 
             reportDir: 'coverage/lcov-report', 
             reportFiles: 'index.html', 
-            reportName: 'HTML Report']) */
+            reportName: 'HTML Report']) 
     //    archive(include: './dist/sistacLabApi-$BUILD_TAG.zip')
     }
 }

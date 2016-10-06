@@ -12,7 +12,8 @@ stage('Commit') {
             reportDir: 'coverage/lcov-report', 
             reportFiles: 'index.html', 
             reportName: 'HTML Report']) 
-    //    archive(include: './dist/sistacLabApi-$BUILD_TAG.zip')
+	archiveArtifacts artifacts: 'dist/sistacLabAPI-${env.BUILD_TAG}.zip', excludes: null
+
     }
 }
 

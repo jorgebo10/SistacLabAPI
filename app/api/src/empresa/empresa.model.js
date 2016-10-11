@@ -40,13 +40,13 @@ EmpresaSchema.static('getByCodigo', function(codigo) {
     .exec();
 });
 
-/*
+
 EmpresaSchema.plugin(autoIncrement.plugin, {
   model: 'Empresa',
   field: 'sequence',
   startAt: 1
 });
-*/
+
 
 EmpresaSchema.static('getByCodigo', function(codigo) {
   return this

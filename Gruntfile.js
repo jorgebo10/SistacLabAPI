@@ -29,6 +29,7 @@ return 'dist/sistacLabAPI-' + environment + '.zip';
 			coverage: {
 				src: 'app/api/specs',
 				options: {
+					mochaOptions: ['--sort'],
 					coverageFolder: 'coverage',
 					reporter: 'spec',
 					coverage: true,

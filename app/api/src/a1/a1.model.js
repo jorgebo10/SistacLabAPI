@@ -89,11 +89,11 @@ A1Schema.static('getByNumeroTramite', function(numeroTramite) {
         .exec();
 });
 
-/*A1Schema.plugin(autoIncrement.plugin, {
+A1Schema.plugin(autoIncrement.plugin, {
     model: 'A1',
     field: 'sequence',
     startAt: 1
 });
-*/
+
 module.exports = mongoose.model('A1', A1Schema);
 }());

@@ -56,12 +56,12 @@ FotoSchema.static('findByInformeIdAndTags', function(informeId, tags) {
         .exec();
 });
 
-/*
+
 FotoSchema.plugin(autoIncrement.plugin, {
     model: 'Foto',
     field: 'sequence',
     startAt: 1
 });
-*/
+
 module.exports = mongoose.model('Foto', FotoSchema);
 }());

@@ -1,0 +1,15 @@
+version: '2'
+services:
+ jenkins:
+  build: ./docker-in-jenkins
+  ports:
+  - "8080:8080"
+  - "5000:5000"
+  volumes:
+  - /home/jbo/jenkins:/var/jenkins_home jenkins
+  depends_on:
+  - artifactory
+ artifactory:
+  image: docker.bintray.io/jfrog/artifactory-oss:latest
+  ports:
+  - "8081:8081"

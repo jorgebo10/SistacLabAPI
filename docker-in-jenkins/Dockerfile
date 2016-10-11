@@ -8,4 +8,3 @@ USER root
 # Otherwise the socket file is not accessible.
 RUN groupadd -g 131 docker && usermod -a -G docker jenkins 
 USER jenkins
-

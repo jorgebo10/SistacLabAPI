@@ -3,13 +3,15 @@ services:
  jenkins:
   build: ./docker-in-jenkins
   ports:
-  - "8080:8080"
-  - "5000:5000"
+   - "8080:8080"
+   - "5000:5000"
   volumes:
-  - /home/jbo/jenkins:/var/jenkins_home 
+   - /var/run/docker.sock:/var/run/docker.sock
+   - /home/jbo/jenkins:/var/jenkins_home 
+   - /usr/bin/docker:/usr/bin/docker 
   depends_on:
-  - artifactory
+   - artifactory
  artifactory:
   image: docker.bintray.io/jfrog/artifactory-oss:latest
   ports:
-  - "8081:8081"
+   - "8081:8081"

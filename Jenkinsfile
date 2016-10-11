@@ -3,9 +3,8 @@ stage('Commit') {
     node {
         git url: 'https://github.com/jorgebo10/SistacLabAPI.git', branch:'development'
 
-        withDockerContainer(args: '-u root:root', image: 'node') {
+        withDockerContainer(image: 'jorgebo10/node-grunt') {
             sh 'npm install'
-            sh 'npm install -g grunt-cli'
             sh 'grunt unittest'
             sh 'grunt compress'
 

@@ -54,6 +54,14 @@ module.exports = function(grunt) {
 			options: {
 				logConcurrentOutput: true
 			}
+		},
+
+		cucumberjs: {
+			src: 'app/test/features',
+			options: {
+				steps: 'app/test/features/step_definitions',
+				format: 'pretty'
+			}
 		}
 	});
 
@@ -64,6 +72,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-mocha-istanbul');
 	grunt.loadNpmTasks('grunt-contrib-compress');
 	grunt.loadNpmTasks('grunt-express-server');
+	grunt.loadNpmTasks('grunt-cucumber');
 
 	grunt.registerTask('default', ['concurrent']);
 	grunt.registerTask('dist', ['jshint', 'mocha_istanbul:coverage', 'compress']);

@@ -1,6 +1,6 @@
 function Testing_steps() {
 
-  var A1DocApi = require('../applicationDriver/A1DocApi');
+  var A1DocApi = require('../appdriver/A1DocApi');
 
   var a1Data = {};
 

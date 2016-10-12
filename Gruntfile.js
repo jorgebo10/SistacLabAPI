@@ -57,9 +57,9 @@ module.exports = function(grunt) {
 		},
 
 		cucumberjs: {
-			src: 'app/test/features',
+			src: 'app/test/at/features',
 			options: {
-				steps: 'app/test/features/step_definitions',
+				steps: 'app/test/at/step_definitions',
 				format: 'pretty'
 			}
 		}

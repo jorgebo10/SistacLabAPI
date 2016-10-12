@@ -6,14 +6,7 @@
     var Empresa = require('./empresa.model');
     var logger = require('../../utils/logger');
     var authUtils = require('../../utils/auth.utils');
-
-    var sendJsonResponse = function(res, status, content) {
-        res.status(status);
-        res.json(content);
-        if (400 === status || 404 === status) {
-            logger.error(content);
-        }
-    };
+    var responseUtils = require('../../utils/response.utils');
 
     exports.findAll = function(req, res) {
         logger.info('Entering EmpresaController#findAll');
@@ -25,12 +18,12 @@
             .then(
                 function(empresas) {
                     logger.info('Found %d results while searching by all', empresas.length);
-                    return sendJsonResponse(res, 200, empresas);
+                    return responseUtils.sendJsonResponse(res, 200, empresas);
                 }
             )
             .catch(
                 function(err) {
-                    return sendJsonResponse(res, 400, err);
+                    return responseUtils.sendJsonResponse(res, 400, err);
                 }
             );
 
@@ -41,7 +34,7 @@
         logger.info('Entering EmpresaController#getByCodigo(req.params.codigo={%s})', req.params.codigo);
 
         if (!req.params || !req.params.codigo) {
-            return sendJsonResponse(res, 404, {
+            return responseUtils.sendJsonResponse(res, 404, {
                 'message': 'codigo not found in request params'
             });
         }
@@ -51,18 +44,18 @@
             .then(
                 function(empresa) {
                     if (null === empresa) {
-                        return sendJsonResponse(res, 404, {
+                        return responseUtils.sendJsonResponse(res, 404, {
                             'message': 'No results found while searching by codigo ' + req.params.codigo
                         });
                     } else {
                         logger.info('Found empresa with codigo %s while searching by codigo %s', empresa.codigo, req.params.codigo);
-                        return sendJsonResponse(res, 200, empresa);
+                        return responseUtils.sendJsonResponse(res, 200, empresa);
                     }
                 }
             )
             .catch(
                 function(err) {
-                    return sendJsonResponse(res, 400, err);
+                    return responseUtils.sendJsonResponse(res, 400, err);
                 }
             );
 
@@ -73,7 +66,7 @@
         logger.info('Entering EmpresaController#create(req.body={%s}', req.body);
 
         if (!req.body.codigo || !req.body.email) {
-            return sendJsonResponse(res, 404, {
+            return responseUtils.sendJsonResponse(res, 404, {
                 'message': 'codigo or email not found in request params or email not found in request body'
             });
         }
@@ -94,12 +87,12 @@
             .then(
                 function(empresa) {
                     logger.info('Empresa created with codigo %s', empresa.codigo);
-                    return sendJsonResponse(res, 201, empresa);
+                    return responseUtils.sendJsonResponse(res, 201, empresa);
                 }
             )
             .catch(
                 function(err) {
-                    return sendJsonResponse(res, 400, err);
+                    return responseUtils.sendJsonResponse(res, 400, err);
                 }
             );
 
@@ -110,7 +103,7 @@
         logger.info('Entering EmpresaController#update %j', req.body);
 
         if (!req.params || !req.params.codigo || !req.body.email) {
-            return sendJsonResponse(res, 404, {
+            return responseUtils.sendJsonResponse(res, 404, {
                 'message': 'codigo or email not found in request params or email not found in request body'
             });
         }
@@ -136,18 +129,18 @@
             .then(
                 function(empresa) {
                     if (null === empresa) {
-                        return sendJsonResponse(res, 404, {
+                        return responseUtils.sendJsonResponse(res, 404, {
                             'message': 'No results found while searching by codigo ' + req.params.codigo
                         });
                     } else {
                         logger.info('Empresa updated by codigo %s', empresa.codigo);
-                        return sendJsonResponse(res, 200, empresa.codigo);
+                        return responseUtils.sendJsonResponse(res, 200, empresa.codigo);
                     }
                 }
             )
             .catch(
                 function(err) {
-                    return sendJsonResponse(res, 400, err);
+                    return responseUtils.sendJsonResponse(res, 400, err);
                 }
             );
 
@@ -159,7 +152,7 @@
 
 
         if (!req.params.codigo) {
-            return sendJsonResponse(res, 404, {
+            return responseUtils.sendJsonResponse(res, 404, {
                 'message': 'codigo not found in request params'
             });
         }
@@ -172,12 +165,12 @@
             .then(
                 function(empresa) {
                     logger.info('Empresa deleted by codigo %s', empresa.codigo);
-                    return sendJsonResponse(res, 204, empresa);
+                    return responseUtils.sendJsonResponse(res, 204, empresa);
                 }
             )
             .catch(
                 function(err) {
-                    return sendJsonResponse(res, 400, err);
+                    return responseUtils.sendJsonResponse(res, 400, err);
                 }
             );
 
@@ -188,7 +181,7 @@
         logger.info('Entering EmpresaController#resetToken(req.body.codigo={%s}', req.body.codigo);
 
         if (!req.body || !req.body.codigo || !req.body.password) {
-            return sendJsonResponse(res, 404, {
+            return responseUtils.sendJsonResponse(res, 404, {
                 'message': 'Codigo and/or password not found in request body'
             });
         }
@@ -201,17 +194,17 @@
             .then(
                 function(empresa) {
                     if (null === empresa) {
-                        return sendJsonResponse(res, 404, {
+                        return responseUtils.sendJsonResponse(res, 404, {
                             'message': 'Empresa not found by codigo: ' + req.body.codigo
                         });
                     }
 
                     if (empresa.password !== password) {
-                        sendJsonResponse(res, 401, {
+                        responseUtils.sendJsonResponse(res, 401, {
                             'message': 'Authetication failure'
                         });
                     } else {
-                        sendJsonResponse(res, 200, {
+                        responseUtils.sendJsonResponse(res, 200, {
                             email: empresa.email,
                             codigo: empresa.codigo,
                             token: authUtils.sign(empresa._id)
@@ -222,7 +215,7 @@
             .catch(
                 function(err) {
                     console.log(err);
-                    return sendJsonResponse(res, 400, err);
+                    return responseUtils.sendJsonResponse(res, 400, err);
                 }
             );
 

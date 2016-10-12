@@ -5,20 +5,13 @@
 
     var A1 = require('./a1.model');
     var logger = require('../../utils/logger');
-
-    var sendJsonResponse = function(res, status, content) {
-        res.status(status);
-        res.json(content);
-        if (400 === status || 404 === status) {
-            logger.error(content);
-        }
-    };
+    var responseUtils = require('../../utils/response.utils');
 
     exports.getByCit = function(req, res) {
         logger.info('Entering A1Controller#getByCit(req.query.cit={%s})', req.query.cit);
 
         if (!req.query || !req.query.cit) {
-            return sendJsonResponse(res, 404, {
+            return responseUtils.sendJsonResponse(res, 404, {
                 'message': 'cit not found in request params'
             });
         }
@@ -34,18 +27,18 @@
             .then(
                 function(a1) {
                     if (null === a1) {
-                        return sendJsonResponse(res, 404, {
+                        return responseUtils.sendJsonResponse(res, 404, {
                             'message': 'No results found while searching by cit ' + req.query.cit
                         });
                     } else {
                         logger.info('Found a1Doc with cit %s while searching by cit %s', req.query.cit, a1.cit);
-                        return sendJsonResponse(res, 200, a1);
+                        return responseUtils.sendJsonResponse(res, 200, a1);
                     }
                 }
             )
             .catch(
                 function(err) {
-                    return sendJsonResponse(res, 400, err);
+                    return responseUtils.sendJsonResponse(res, 400, err);
                 }
             );
 
@@ -57,7 +50,7 @@
         logger.info('Entering A1Controller#getByNumeroTramite(req.params.numeroTramite={%s})', req.params.numeroTramite);
 
         if (!req.params || !req.params.numeroTramite) {
-            return sendJsonResponse(res, 404, {
+            return responseUtils.sendJsonResponse(res, 404, {
                 'message': 'numeroTramite not found in request params'
             });
         }
@@ -67,18 +60,18 @@
             .then(
                 function(a1) {
                     if (null === a1) {
-                        return sendJsonResponse(res, 404, {
+                        return responseUtils.sendJsonResponse(res, 404, {
                             'message': 'No results found while searching by numeroTramite ' + req.params.numeroTramite
                         });
                     } else {
                         logger.info('Found a1Doc with numeroTramite %s while searching by numeroTramite %s', req.params.numeroTramite, a1.numeroTramite);
-                        return sendJsonResponse(res, 200, a1);
+                        return responseUtils.sendJsonResponse(res, 200, a1);
                     }
                 }
             )
             .catch(
                 function(err) {
-                    return sendJsonResponse(res, 400, err);
+                    return responseUtils.sendJsonResponse(res, 400, err);
                 }
             );
 
@@ -95,12 +88,12 @@
             .then(
                 function(a1s) {
                     logger.info('Found %d results while searching by all', a1s.length);
-                    return sendJsonResponse(res, 200, a1s);
+                    return responseUtils.sendJsonResponse(res, 200, a1s);
                 }
             )
             .catch(
                 function(err) {
-                    return sendJsonResponse(res, 400, err);
+                    return responseUtils.sendJsonResponse(res, 400, err);
                 }
             );
 
@@ -111,7 +104,7 @@
         logger.info('Entering A1Controller#create(req.body={%s}', req.body);
 
         if (!req.body.numeroTramite) {
-            return sendJsonResponse(res, 404, {
+            return responseUtils.sendJsonResponse(res, 404, {
                 'message': 'numeroTramite not found'
             });
         }
@@ -139,12 +132,12 @@
             .then(
                 function(a1) {
                     logger.info('A1Doc created with numeroTramite %s', a1.numeroTramite);
-                    return sendJsonResponse(res, 201, a1);
+                    return responseUtils.sendJsonResponse(res, 201, a1);
                 }
             )
             .catch(
                 function(err) {
-                    return sendJsonResponse(res, 400, err);
+                    return responseUtils.sendJsonResponse(res, 400, err);
                 }
             );
 
@@ -155,7 +148,7 @@
         logger.info('Entering A1Controller#update %j', req.body);
 
         if (!req.params || !req.params.numeroTramite) {
-            return sendJsonResponse(res, 404, {
+            return responseUtils.sendJsonResponse(res, 404, {
                 'message': 'numeroTramite not found in request params'
             });
         }
@@ -187,18 +180,18 @@
             .then(
                 function(a1) {
                     if (null === a1) {
-                        return sendJsonResponse(res, 404, {
+                        return responseUtils.sendJsonResponse(res, 404, {
                             'message': 'No results found while searching by numeroTramite ' + req.params.numeroTramite
                         });
                     } else {
                         logger.info('A1Doc updated by numeroTramite %s', a1.numeroTramite);
-                        return sendJsonResponse(res, 200, a1.numeroTramite);
+                        return responseUtils.sendJsonResponse(res, 200, a1.numeroTramite);
                     }
                 }
             )
             .catch(
                 function(err) {
-                    return sendJsonResponse(res, 400, err);
+                    return responseUtils.sendJsonResponse(res, 400, err);
                 }
             );
 
@@ -210,7 +203,7 @@
 
         var numeroTramite = req.params.numeroTramite;
         if (!numeroTramite) {
-            return sendJsonResponse(res, 404, {
+            return responseUtils.sendJsonResponse(res, 404, {
                 'message': 'a1Doc not found'
             });
         }
@@ -223,12 +216,12 @@
             .then(
                 function(a1) {
                     logger.info('A1Doc deleted by numeroTramite %s', a1.numeroTramite);
-                    return sendJsonResponse(res, 204, a1);
+                    return responseUtils.sendJsonResponse(res, 204, a1);
                 }
             )
             .catch(
                 function(err) {
-                    return sendJsonResponse(res, 400, err);
+                    return responseUtils.sendJsonResponse(res, 400, err);
                 }
             );
 

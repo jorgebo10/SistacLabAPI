@@ -91,23 +91,22 @@
 			mock
 				.expects('create')
 				.withArgs({
-					numeroTramite: '1',
+					anioInstalacion: undefined,
 					cit: undefined,
-					normaFabricacion: undefined,
+					elevado: undefined,
+					especificacionChapas: undefined,
+					estado: undefined,
 					fabricante: undefined,
 					matricula: undefined,
-					estado: undefined,
 					nombreInstalacion: undefined,
-					anioFabricacion: undefined,
-					anioInstalacion: undefined,
+					normaFabricacion: undefined,
+					numeroInterno: undefined,
+					numeroTramite: "1",
+					observaciones: undefined,
 					placaIdentificacion: undefined,
 					temperaturaOperacion: undefined,
-					especificacionChapas: undefined,
-					numeroInterno: undefined,
-					observaciones: undefined,
-					elevado: undefined,
 					tieneInspeccionesAnteriores: undefined,
-					laminasInspeccionadas: undefined
+					volumenEndicamientoMinimo: undefined
 				})
 				.chain('exec')
 				.resolves(a1);
@@ -145,23 +144,22 @@
 			mock
 				.expects('create')
 				.withArgs({
-					numeroTramite: '1',
+					anioInstalacion: undefined,
 					cit: undefined,
-					normaFabricacion: undefined,
+					elevado: undefined,
+					especificacionChapas: undefined,
+					estado: undefined,
 					fabricante: undefined,
 					matricula: undefined,
-					estado: undefined,
 					nombreInstalacion: undefined,
-					anioFabricacion: undefined,
-					anioInstalacion: undefined,
+					normaFabricacion: undefined,
+					numeroInterno: undefined,
+					numeroTramite: "1",
+					observaciones: undefined,
 					placaIdentificacion: undefined,
 					temperaturaOperacion: undefined,
-					especificacionChapas: undefined,
-					numeroInterno: undefined,
-					observaciones: undefined,
-					elevado: undefined,
 					tieneInspeccionesAnteriores: undefined,
-					laminasInspeccionadas: undefined
+					volumenEndicamientoMinimo: undefined
 				})
 				.chain('exec')
 				.rejects('error');

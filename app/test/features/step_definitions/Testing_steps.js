@@ -1,27 +1,38 @@
 function Testing_steps() {
-  var firstNumber;
-  var secondNumber;
-  var sum = 0;
 
-  this.Given(/^I have the number (\d+) and (\d+)$/, function(arg1, arg2, callback) {
-    firstNumber = parseInt(arg1);
-    secondNumber = parseInt(arg2);
+  var A1DocApi = require('../applicationDriver/A1DocApi');
+
+  var a1Data = {};
+
+  this.Given(/^I want to create a new AUnoDoc with numeroTramite (\d+)$/, function(numeroTramite, callback) {
+    a1Data.numeroTramite = numeroTramite;
+    a1Data.anioInstalacion = undefined;
+    a1Data.cit = undefined;
+    a1Data.elevado = undefined;
+    a1Data.especificacionChapas = undefined;
+    a1Data.estado = undefined;
+    a1Data.fabricante = undefined;
+    a1Data.matricula = undefined;
+    a1Data.nombreInstalacion = undefined;
+    a1Data.normaFabricacion = undefined;
+    a1Data.numeroInterno = undefined;
+    a1Data.observaciones = undefined;
+    a1Data.placaIdentificacion = undefined;
+    a1Data.temperaturaOperacion = undefined;
+    a1Data.tieneInspeccionesAnteriores = undefined;
+    a1Data.volumenEndicamientoMinimo = undefined;
     callback();
   });
 
-  this.When(/^I add them together$/, function(callback) {
-    sum = firstNumber + secondNumber;
+  this.When(/^I trigger creation$/, function(callback) {
+    A1DocApi.new(a1Data);
     callback();
   });
 
-  this.Then(/^I should have (\d+)$/, function(arg1, callback) {
-    var expectedSum = parseInt(arg1);
-    if (expectedSum !== sum) {
-      throw new Error('It doesn\'t add up! ' + arg1 + ' !== ' + sum);
-    }
+  this.Then(/^AUnoDoc with numeroTramite (\d+) is created$/, function(numeroTramite, callback) {
+    A1DocApi.getByNumeroTramite(numeroTramite);
     callback();
   });
-
-};
+}
 
 module.exports = Testing_steps;

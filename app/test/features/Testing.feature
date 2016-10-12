@@ -1,9 +1,9 @@
-Feature: Testing
-  As a grunt-cucumber-js dev
-  I want a Testing.feature file
-  So that I can test the cucumber-js-task
+Feature: Attempt to create A1 docs
+  As a sistac user 
+  I want to create A1 docs
+  So that I can asign them to existing Informes
 
-  Scenario: A test scenario
-    Given I have the number 1 and 3
-    When I add them together
-    Then I should have 4
+  Scenario: A1 creation with valid data
+    Given I want to create a new AUnoDoc with numeroTramite 1234
+    When I trigger creation
+    Then AUnoDoc with numeroTramite 1234 is created

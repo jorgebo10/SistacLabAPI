@@ -27,35 +27,33 @@
             default: false
         },
         nombreInstalacion: {
-            type: String
+            type: String,
+            default: ''
+        },
+        volumenEndicamientoMinimo: {
+            type: Number,
+            max: 9999999,
         },
         normaFabricacion: String,
         fabricante: {
-            type: String
+            type: String,
+            default: ''
         },
         matricula: {
-            type: String
+            type: String,
+            default: ''
         },
         estado: {
-            type: String
+            type: String,
+            default: ''
         },
         observaciones: {
-            type: String
+            type: String,
+            default: ''
         },
         numeroInterno: {
-            type: String
-        },
-        laminasInspeccionadas: {
-            type: Number,
-            default: 0,
-            min: 0,
-            max: 500
-        },
-        anioFabricacion: {
-            type: Number,
-            min: 1800,
-            max: 4000,
-            default: 1800
+            type: String,
+            default: ''
         },
         anioInstalacion: {
             type: Number,
@@ -64,14 +62,16 @@
             default: 1800
         },
         placaIdentificacion: {
-            type: String
+            type: String,
+            default: ''
         },
         temperaturaOperacion: {
             type: String,
             default: 'Ambiente'
         },
         especificacionChapas: {
-            type: String
+            type: String,
+            default: ''
         }
     });
 

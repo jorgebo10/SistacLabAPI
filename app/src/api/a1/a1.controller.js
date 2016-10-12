@@ -115,9 +115,9 @@
                 normaFabricacion: req.body.normaFabricacion,
                 fabricante: req.body.fabricante,
                 matricula: req.body.matricula,
+                volumenEndicamientoMinimo: req.body.volumenEndicamientoMinimo,
                 estado: req.body.estado,
                 nombreInstalacion: req.body.nombreInstalacion,
-                anioFabricacion: req.body.anioFabricacion,
                 anioInstalacion: req.body.anioInstalacion,
                 placaIdentificacion: req.body.placaIdentificacion,
                 temperaturaOperacion: req.body.temperaturaOperacion,
@@ -125,8 +125,7 @@
                 numeroInterno: req.body.numeroInterno,
                 observaciones: req.body.observaciones,
                 elevado: req.body.elevado,
-                tieneInspeccionesAnteriores: req.body.tieneInspeccionesAnteriores,
-                laminasInspeccionadas: req.body.laminasInspeccionadas
+                tieneInspeccionesAnteriores: req.body.tieneInspeccionesAnteriores
             })
             .exec()
             .then(

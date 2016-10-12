@@ -26,7 +26,7 @@ module.exports = function(grunt) {
 
 		mocha_istanbul: {
 			coverage: {
-				src: 'app/api/specs',
+				src: 'app/test/specs',
 				options: {
 					mochaOptions: ['--sort'],
 					coverageFolder: 'coverage',

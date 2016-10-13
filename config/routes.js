@@ -2,6 +2,8 @@
 
 'use strict';
 
+var uris = require('./uris');
+
 module.exports = function(app) {
 
 app.get('/', function(req, res) {
@@ -14,7 +16,7 @@ app.get('/', function(req, res) {
 //  app.use('/api/empresas', require('../api/src/empresa'));
 //  app.use('/api/fotos', require('../app/api/src/foto'));
 //  app.use('/api/informes', require('../api/src/informe'));
-  app.use('/api/a1s', require('../app/api/src/a1'));
+  app.use(uris.a1, require('../app/src/api/a1'));
 //  app.use('/api/users', require('./api/src/user'));
 };
 }());

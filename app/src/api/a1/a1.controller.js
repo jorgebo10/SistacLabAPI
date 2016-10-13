@@ -6,6 +6,7 @@
     var A1 = require('./a1.model');
     var logger = require('../../utils/logger');
     var responseUtils = require('../../utils/response.utils');
+    var uris = require('../../../../config/uris');
 
     exports.getByCit = function(req, res) {
         logger.info('Entering A1Controller#getByCit(req.query.cit={%s})', req.query.cit);
@@ -127,11 +128,11 @@
                 elevado: req.body.elevado,
                 tieneInspeccionesAnteriores: req.body.tieneInspeccionesAnteriores
             })
-            .exec()
             .then(
                 function(a1) {
+                    //TODO: Extract uri to a common method
                     logger.info('A1Doc created with numeroTramite %s', a1.numeroTramite);
-                    return responseUtils.sendJsonResponse(res, 201, a1);
+                    return responseUtils.sendJsonResponseCreatedOk(res, uris.a1 + a1.numeroTramite, a1);
                 }
             )
             .catch(

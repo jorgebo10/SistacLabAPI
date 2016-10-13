@@ -49,6 +49,7 @@
     "sinon": "^1.17.3",
     "sinon-as-promised": "^4.0.0",
     "sinon-mongoose": "^1.2.1",
+    "supertest": "^2.0.0",
     "underscore": "^1.8.3"
   }
 }

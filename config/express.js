@@ -2,7 +2,7 @@
 
 'use strict';
 
-var logger = require('../app/utils/logger.js');
+var logger = require('../app/src/utils/logger.js');
 var morgan = require('morgan');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');

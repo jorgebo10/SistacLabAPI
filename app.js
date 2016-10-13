@@ -2,7 +2,7 @@
 
 'use strict';
 
-var logger = require('./app/utils/logger');
+var logger = require('./app/src/utils/logger');
 var express = require('express');
 var config = require('./config/environment');
 var mongoose = require('mongoose');

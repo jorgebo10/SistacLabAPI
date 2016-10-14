@@ -19,9 +19,6 @@
 			res.location(location);
 			res.status(201);
 			res.json(content);
-
-
-
 		}
 	};
 

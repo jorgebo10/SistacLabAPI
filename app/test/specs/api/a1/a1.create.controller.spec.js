@@ -6,6 +6,7 @@
 	require('sinon-as-promised');
 	require('sinon-mongoose');
 	var should = require('chai').should();
+	var responseUtils = require('../../../../../config/uris');
 
 	describe('A1Controller', function() {
 		var A1Controller = require('../../../../src/api/a1/a1.controller.js');
@@ -64,7 +65,7 @@
 		it('should return 201 while creating', function(done) {
 			var mock = sinon.mock(A1Model);
 			var a1 = {
-				numeroTramite: '1'
+				numeroTramite: 1
 			};
 
 			var statusCallback = function(status) {
@@ -72,27 +73,35 @@
 			};
 
 			var jsonCallback = function(json) {
+				console.log(a1);
 				json.should.equal(a1);
 				mock.restore();
 				done();
 			};
 
+			var locationCallback = function(location) {
+				location.should.equal(responseUtils.a1 + a1.numeroTramite);
+			};
+
 			var req = {
 				body: {
-					numeroTramite: '1'
+					numeroTramite: 1,
+					cit: 99
 				}
 			};
 
 			var res = {
 				status: statusCallback,
+				location: locationCallback,
 				json: jsonCallback
 			};
 
 			mock
 				.expects('create')
 				.withArgs({
+					numeroTramite: 1,
 					anioInstalacion: undefined,
-					cit: undefined,
+					cit: 99,
 					elevado: undefined,
 					especificacionChapas: undefined,
 					estado: undefined,
@@ -101,14 +110,12 @@
 					nombreInstalacion: undefined,
 					normaFabricacion: undefined,
 					numeroInterno: undefined,
-					numeroTramite: "1",
 					observaciones: undefined,
 					placaIdentificacion: undefined,
 					temperaturaOperacion: undefined,
 					tieneInspeccionesAnteriores: undefined,
 					volumenEndicamientoMinimo: undefined
 				})
-				.chain('exec')
 				.resolves(a1);
 
 			A1Controller.create(req, res);
@@ -116,8 +123,9 @@
 
 		it('should return 400 if error while creating', function(done) {
 			var mock = sinon.mock(A1Model);
+
 			var a1 = {
-				numeroTramite: '1'
+				numeroTramite: 1
 			};
 
 			var statusCallback = function(status) {
@@ -132,7 +140,8 @@
 
 			var req = {
 				body: {
-					numeroTramite: '1'
+					numeroTramite: 1,
+					cit: 99
 				}
 			};
 
@@ -144,8 +153,9 @@
 			mock
 				.expects('create')
 				.withArgs({
+					numeroTramite: 1,
 					anioInstalacion: undefined,
-					cit: undefined,
+					cit: 99,
 					elevado: undefined,
 					especificacionChapas: undefined,
 					estado: undefined,
@@ -154,14 +164,12 @@
 					nombreInstalacion: undefined,
 					normaFabricacion: undefined,
 					numeroInterno: undefined,
-					numeroTramite: "1",
 					observaciones: undefined,
 					placaIdentificacion: undefined,
 					temperaturaOperacion: undefined,
 					tieneInspeccionesAnteriores: undefined,
 					volumenEndicamientoMinimo: undefined
 				})
-				.chain('exec')
 				.rejects('error');
 
 			A1Controller.create(req, res);

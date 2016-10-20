@@ -6,6 +6,7 @@
 	require('sinon-as-promised');
 	require('sinon-mongoose');
 	var should = require('chai').should();
+	var uris = require('../../../../../config/uris');
 
 	describe('FotoController', function() {
 		var FotoController = require('../../../../src/api/foto/foto.controller.js');
@@ -148,6 +149,10 @@
 				status.should.equal(201);
 			};
 
+			var locationCallback = function(location) {
+				location.should.equal(uris.foto + foto.id);
+			};
+
 			var jsonCallback = function(json) {
 				json.should.deep.equal(foto);
 				mock.restore();
@@ -166,6 +171,7 @@
 
 			var res = {
 				status: statusCallback,
+				location: locationCallback,
 				json: jsonCallback
 			};
 
@@ -204,7 +210,6 @@
 					syncTime: undefined,
 					tags: undefined
 				})
-				.chain('exec')
 				.resolves(foto);
 
 			FotoController.create(req, res);

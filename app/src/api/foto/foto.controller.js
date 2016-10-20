@@ -8,6 +8,7 @@
     var _ = require('underscore');
     var Foto = require('./foto.model');
     var responseUtils = require('../../utils/response.utils');
+    var uris = require('../../../../config/uris');
 
     exports.getById = function(req, res) {
         logger.info('Entering FotoController#getById(req.params.id={%s})', req.params.id);
@@ -195,7 +196,6 @@
             });
         }
 
-
         var imagen = req.body.imagen;
         var data = imageUtils.getDataFromBase64Image(imagen);
         var ext = imageUtils.getExtFromBase64Image(imagen);
@@ -203,6 +203,7 @@
 
         imageUtils.writeImageBase64(data, filename, ext);
         imageUtils.resizeImage(filename, ext);
+
 
         Foto.create({
                 informeId: req.body.informeId,
@@ -212,11 +213,10 @@
                 tags: req.body.tags,
                 syncTime: req.body.syncTime
             })
-            .exec()
             .then(
                 function(foto) {
                     logger.info('Foto created with id %s', foto.id);
-                    return responseUtils.sendJsonResponse(res, 201, foto);
+                       return responseUtils.sendJsonResponseCreatedOk(res, uris.foto + foto.id, foto);
                 }
             )
             .catch(

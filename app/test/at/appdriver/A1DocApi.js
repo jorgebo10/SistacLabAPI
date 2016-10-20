@@ -7,9 +7,8 @@
 	var logger = require('../../../src/utils/logger');
 	var requestify = require('requestify');
 	var uris = require('../../../../config/uris');
-	var mocha = require('mocha'),
-		sinon = require('sinon'),
-		expect = require('chai').expect;
+	var expect = require('chai').expect;
+	var assert = require('chai').assert;
 
 	var A1DocApi = {
 
@@ -22,6 +21,7 @@
 				})
 				.fail(function(response) {
 					logger.error(response);
+					assert.fail(response);
 					callback();
 				});
 			callback();
@@ -43,6 +43,7 @@
 				})
 				.fail(function(response) {
 					logger.error(response);
+					assert.fail(response);
 					callback();
 				});
 		}

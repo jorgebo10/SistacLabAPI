@@ -7,6 +7,7 @@
     var logger = require('../../utils/logger');
     var authUtils = require('../../utils/auth.utils');
     var responseUtils = require('../../utils/response.utils');
+    var uris = require('../../../../config/uris');
 
     exports.findAll = function(req, res) {
         logger.info('Entering EmpresaController#findAll');
@@ -83,11 +84,10 @@
                 contacto: req.body.contact,
                 imagen: req.body.imagen !== undefined ? req.body.imagen.src : ''
             })
-            .exec()
             .then(
                 function(empresa) {
                     logger.info('Empresa created with codigo %s', empresa.codigo);
-                    return responseUtils.sendJsonResponse(res, 201, empresa);
+                    return responseUtils.sendJsonResponseCreatedOk(res, uris.empresa + empresa.codigo, empresa);
                 }
             )
             .catch(

@@ -6,6 +6,7 @@
 	require('sinon-as-promised');
 	require('sinon-mongoose');
 	var should = require('chai').should();
+	var responseUtils = require('../../../../../config/uris');
 
 	describe('EmpresaController', function() {
 		var EmpresaController = require('../../../../src/api/empresa/empresa.controller.js');
@@ -85,7 +86,7 @@
 		it('should return 201 while creating', function(done) {
 			var mock = sinon.mock(EmpresaModel);
 			var empresa = {
-				codigo: '1',
+				codigo: 1,
 				email: 'pepe@gmail.com'
 			};
 
@@ -93,7 +94,13 @@
 				status.should.equal(201);
 			};
 
+			var locationCallback = function(location) {
+				console.log(location);
+				location.should.equal(responseUtils.empresa + empresa.codigo);
+			};
+
 			var jsonCallback = function(json) {
+				console.log(json);
 				json.should.equal(empresa);
 				mock.restore();
 				done();
@@ -108,6 +115,7 @@
 
 			var res = {
 				status: statusCallback,
+				location: locationCallback,
 				json: jsonCallback
 			};
 
@@ -125,7 +133,6 @@
 					contacto: undefined,
 					imagen: ''
 				})
-				.chain('exec')
 				.resolves(empresa);
 
 			EmpresaController.create(req, res);
@@ -134,7 +141,7 @@
 		it('should return 201 while creating with image', function(done) {
 			var mock = sinon.mock(EmpresaModel);
 			var empresa = {
-				codigo: '1',
+				codigo: 1,
 				email: 'pepe@gmail.com'
 			};
 
@@ -146,6 +153,10 @@
 				json.should.equal(empresa);
 				mock.restore();
 				done();
+			};
+
+			var locationCallback = function(location) {
+				location.should.equal(responseUtils.empresa + empresa.codigo);
 			};
 
 			var req = {
@@ -160,6 +171,7 @@
 
 			var res = {
 				status: statusCallback,
+				location: locationCallback,
 				json: jsonCallback
 			};
 
@@ -177,7 +189,6 @@
 					contacto: undefined,
 					imagen: req.body.imagen.src
 				})
-				.chain('exec')
 				.resolves(empresa);
 
 			EmpresaController.create(req, res);

@@ -6,7 +6,7 @@
 	require('sinon-as-promised');
 	require('sinon-mongoose');
 	var should = require('chai').should();
-	var responseUtils = require('../../../../../config/uris');
+	var uris = require('../../../../../config/uris');
 
 	describe('A1Controller', function() {
 		var A1Controller = require('../../../../src/api/a1/a1.controller.js');
@@ -73,14 +73,13 @@
 			};
 
 			var jsonCallback = function(json) {
-				console.log(a1);
 				json.should.equal(a1);
 				mock.restore();
 				done();
 			};
 
 			var locationCallback = function(location) {
-				location.should.equal(responseUtils.a1 + a1.numeroTramite);
+				location.should.equal(uris.a1 + a1.numeroTramite);
 			};
 
 			var req = {

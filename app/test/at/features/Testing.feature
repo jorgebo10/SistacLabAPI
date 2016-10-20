@@ -1,9 +1,6 @@
-Feature: Attempt to create A1 docs
-  As a sistac user 
-  I want to create A1 docs
-  So that I can asign them to existing Informes
+Feature: A1 creation
 
-  Scenario: A1 creation with valid data
+  Scenario: Succesful A1 creation when it does not exist by numeroTramite and cit
     Given I want to create a new AUnoDoc with numeroTramite 4444 and cit 4444
     When I trigger creation
     Then AUnoDoc with numeroTramite 86746 is created

@@ -7,7 +7,7 @@
 	var apiPath = {
 		a1: '/api/a1s/',
 		empresa: '/api/empresas/',
-		fotos: '/api/fotos/'
+		foto: '/api/fotos/'
 	};
 
 	module.exports = apiPath;

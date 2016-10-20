@@ -17,7 +17,6 @@
             });
         }
 
-
         /*
          Although this method is expected to return one object,
          it is implemented to return an array so that we have compatibility
@@ -130,7 +129,6 @@
             })
             .then(
                 function(a1) {
-                    //TODO: Extract uri to a common method
                     logger.info('A1Doc created with numeroTramite %s', a1.numeroTramite);
                     return responseUtils.sendJsonResponseCreatedOk(res, uris.a1 + a1.numeroTramite, a1);
                 }
